@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore"
+import { collection, query, where, orderBy, getDocs, doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UserIcon, CalendarIcon, Globe } from "lucide-react"
 import Link from "next/link"
@@ -42,21 +42,47 @@ export default function PublicProfilePage() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        if (!username) {
-          setUserNotFound(true)
-          setLoading(false)
-          return
-        }
-
         if (!db) throw new Error("Firestore is not initialized")
 
-        // First, find the user by username
-        const usersQuery = query(
+        // First, find the user by username (try case-insensitive)
+        let usersSnapshot
+        
+        // Try exact match first
+        let usersQuery = query(
           collection(db, "Users"),
           where("username", "==", username)
         )
         
-        const usersSnapshot = await getDocs(usersQuery)
+        usersSnapshot = await getDocs(usersQuery)
+        
+        // If no exact match, try with different casing
+        if (usersSnapshot.empty) {
+          // Try with first letter capitalized
+          const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1).toLowerCase()
+          usersQuery = query(
+            collection(db, "Users"),
+            where("username", "==", capitalizedUsername)
+          )
+          usersSnapshot = await getDocs(usersQuery)
+        }
+        
+        // If still no match, try all lowercase
+        if (usersSnapshot.empty) {
+          usersQuery = query(
+            collection(db, "Users"),
+            where("username", "==", username.toLowerCase())
+          )
+          usersSnapshot = await getDocs(usersQuery)
+        }
+        
+        // If still no match, try all uppercase
+        if (usersSnapshot.empty) {
+          usersQuery = query(
+            collection(db, "Users"),
+            where("username", "==", username.toUpperCase())
+          )
+          usersSnapshot = await getDocs(usersQuery)
+        }
         
         if (usersSnapshot.empty) {
           setUserNotFound(true)
@@ -69,11 +95,14 @@ export default function PublicProfilePage() {
         const user = { ...userDoc.data() } as UserData
         setUserData(user)
 
+        // Use the actual username from the database for article queries
+        const actualUsername = user.username
+
         // Fetch user's published articles
         try {
           const articlesQuery = query(
             collection(db, "Articles"),
-            where("authorName", "==", username),
+            where("authorName", "==", actualUsername),
             where("published", "==", true),
             orderBy("createdAt", "desc")
           )
@@ -88,27 +117,36 @@ export default function PublicProfilePage() {
         } catch (indexError: any) {
           console.error("Index error for articles:", indexError)
           
-          // Fallback: fetch without ordering
-          const fallbackQuery = query(
-            collection(db, "Articles"),
-            where("authorName", "==", username),
-            where("published", "==", true)
-          )
-          
-          const fallbackSnapshot = await getDocs(fallbackQuery)
-          const fallbackArticles = fallbackSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Article[]
+          // Check if it's a missing index error
+          if (indexError.code === "failed-precondition" && indexError.message.includes("requires an index")) {
+            console.log("Missing Firestore index. Using fallback query without ordering.")
+            console.log("Create index at:", indexError.message.match(/https:\/\/console\.firebase\.google\.com[^\s]+/)?.[0])
+            
+            // Fallback: fetch without ordering
+            const fallbackQuery = query(
+              collection(db, "Articles"),
+              where("authorName", "==", actualUsername),
+              where("published", "==", true)
+            )
+            
+            const fallbackSnapshot = await getDocs(fallbackQuery)
+            const fallbackArticles = fallbackSnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Article[]
 
-          // Sort manually
-          fallbackArticles.sort((a, b) => {
-            const dateA = a.createdAt?.toDate?.() || new Date(0)
-            const dateB = b.createdAt?.toDate?.() || new Date(0)
-            return dateB.getTime() - dateA.getTime()
-          })
+            // Sort manually in JavaScript
+            fallbackArticles.sort((a, b) => {
+              const dateA = a.createdAt?.toDate?.() || new Date(0)
+              const dateB = b.createdAt?.toDate?.() || new Date(0)
+              return dateB.getTime() - dateA.getTime()
+            })
 
-          setArticles(fallbackArticles)
+            setArticles(fallbackArticles)
+          } else {
+            // If it's another type of error, rethrow it
+            throw indexError
+          }
         }
 
       } catch (error) {
@@ -136,7 +174,7 @@ export default function PublicProfilePage() {
           <div className="mb-8">
             <Card>
               <CardHeader>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex items-center gap-4">
                   <Skeleton className="h-16 w-16 rounded-full" />
                   <div className="flex-1">
                     <Skeleton className="h-6 w-48 mb-2" />
@@ -184,7 +222,7 @@ export default function PublicProfilePage() {
             <UserIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
             <h1 className="text-2xl font-bold mb-2">User Not Found</h1>
             <p className="text-muted-foreground mb-6">
-              {username ? `The user @${username} doesn't exist or may have changed their username.` : "Invalid user profile URL."}
+              The user {username} doesn't exist or may have changed their username.
             </p>
             <Link href="/articles">
               <Button>Browse Articles</Button>
@@ -206,25 +244,26 @@ export default function PublicProfilePage() {
         <div className="mb-8">
           <Card>
             <CardHeader>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-2xl">
-                  {userData?.profileEmoji || <UserIcon className="h-8 w-8 text-muted-foreground" />}
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-2xl">
+                  {userData?.profileEmoji || <UserIcon className="h-4 w-4 text-muted-foreground" />}
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold">
-                    @{userData?.username}
+                  <h1 className="text-lg font-semibold capitalize flex items-center gap-2">
+                    {userData?.username}
                   </h1>
                   {joinDate && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <CalendarIcon className="h-4 w-4" />
                       Joined {joinDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                     </p>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Globe className="h-4 w-4" />
-                  <span className="hidden sm:inline">minispace.dev/@{userData?.username}</span>
-                  <span className="sm:hidden">@{userData?.username}</span>
+                <div className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    minispace.dev/{userData?.username}
+                  </span>
                 </div>
               </div>
             </CardHeader>
@@ -239,7 +278,7 @@ export default function PublicProfilePage() {
         {/* Published Articles */}
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-lg font-semibold">
               Published Articles ({articles.length})
             </h2>
           </div>
@@ -247,41 +286,42 @@ export default function PublicProfilePage() {
           {articles.length === 0 ? (
             <div className="text-center py-12 border rounded-lg">
               <p className="text-muted-foreground mb-4">
-                @{userData?.username} hasn't published any articles yet
+                {userData?.username} hasn't published any articles yet
               </p>
               <Link href="/articles">
                 <Button variant="outline">Browse Other Articles</Button>
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="">
               {articles.map((article) => (
-                <Card key={article.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="pt-6">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
-                      <Link href={`/articles/${article.id}`} className="flex-1">
-                        <h3 className="text-lg font-medium hover:text-blue-600 transition-colors cursor-pointer">
-                          {article.title}
-                        </h3>
+                <div key={article.id} className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
+                  <div className="flex flex-wrap gap-2 items-center justify-start text-left">
+                    <Link href={`/articles/${article.id}`}>
+                      <h2 className="text-base font-semibold hover:text-blue-600 transition-colors cursor-pointer">
+                        {article.title}
+                      </h2>
+                    </Link>
+                    <span className="text-sm text-muted-foreground">
+                      by{" "}
+                      <Link href={`/${userData?.username}`} className="hover:text-blue-600 transition-colors">
+                        {userData?.username}
                       </Link>
-                      <span className="text-sm text-muted-foreground">
-                        {article.createdAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
-                      </span>
-                    </div>
-
-                    <p className="text-muted-foreground mb-3 line-clamp-2">
-                      {article.excerpt}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {article.tags?.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                    </span>
+                  </div>
+                  <Link href={`/articles/${article.id}`}>
+                    <p className="text-sm text-muted-foreground cursor-pointer">{article.excerpt}</p>
+                  </Link>
+                  <div className="flex flex-wrap justify-start items-center gap-2">
+                    {article.tags && article.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {article.tags.map((tag) => (
+                          <p className="text-muted-foreground text-[10px]" key={tag}>#{tag}</p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           )}

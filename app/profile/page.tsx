@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Eye, EyeOff, Edit, Mail, UserIcon, PenLineIcon, Globe } from "lucide-react"
+import { Eye, EyeOff, Edit, Mail, UserIcon, PenLineIcon, Globe, PenBoxIcon } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -187,11 +187,11 @@ export default function ProfilePage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-full p-2">
+                  <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
                     {userData?.profileEmoji ? (
-                      <span className="text-lg">{userData.profileEmoji}</span>
+                      <span className="text-base">{userData.profileEmoji}</span>
                     ) : (
-                      <UserIcon className="h-5 w-5 text-muted-foreground" />
+                      <UserIcon className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
                   <div>
@@ -200,8 +200,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-full p-2">
-                    <Mail className="h-5 w-5 text-muted-foreground" />
+                  <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Email</p>
@@ -210,8 +210,8 @@ export default function ProfilePage() {
                 </div>
                 {userData?.bio && (
                   <div className="flex items-start gap-3">
-                    <div className="bg-muted rounded-full p-2 mt-1">
-                      <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center mt-1">
+                      <PenBoxIcon className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Bio</p>
@@ -220,8 +220,8 @@ export default function ProfilePage() {
                   </div>
                 )}
                 <div className="flex items-center gap-3">
-                  <div className="bg-muted rounded-full p-2">
-                    <Globe className="h-5 w-5 text-muted-foreground" />
+                  <div className="bg-muted rounded-full h-10 w-10 flex items-center justify-center">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Public Profile</p>
