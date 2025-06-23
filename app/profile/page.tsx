@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Eye, EyeOff, Edit, Mail, UserIcon, PenLineIcon } from "lucide-react"
+import { Eye, EyeOff, Edit, Mail, UserIcon, PenLineIcon, Globe } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -164,11 +164,19 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <h1 className="text-xl font-bold">My Profile</h1>
-          <Link href="/write">
-            <Button>
-              <PenLineIcon className="w-4 h-4" />
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href={`/${userData?.username}`}>
+              <Button variant="outline" size="sm">
+                <Globe className="w-4 h-4 mr-2" />
+                View Public Profile
+              </Button>
+            </Link>
+            <Link href="/write">
+              <Button>
+                <PenLineIcon className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="mb-8">
@@ -180,11 +188,15 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="bg-muted rounded-full p-2">
-                    <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    {userData?.profileEmoji ? (
+                      <span className="text-lg">{userData.profileEmoji}</span>
+                    ) : (
+                      <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    )}
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Username</p>
-                    <p className="text-sm font-medium">{userData?.username}</p>
+                    <p className="text-sm font-medium">@{userData?.username}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -194,6 +206,28 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-xs text-muted-foreground">Email</p>
                     <p className="text-sm font-medium">{userData?.email}</p>
+                  </div>
+                </div>
+                {userData?.bio && (
+                  <div className="flex items-start gap-3">
+                    <div className="bg-muted rounded-full p-2 mt-1">
+                      <UserIcon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Bio</p>
+                      <p className="text-sm font-medium whitespace-pre-wrap">{userData.bio}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <div className="bg-muted rounded-full p-2">
+                    <Globe className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Public Profile</p>
+                    <Link href={`/${userData?.username}`} className="text-sm font-medium text-blue-600 hover:underline">
+                      minispace.dev/{userData?.username}
+                    </Link>
                   </div>
                 </div>
               </div>

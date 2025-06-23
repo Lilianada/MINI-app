@@ -75,7 +75,7 @@ export default function ArticlesPage() {
   }
 
   const fetchArticles = useCallback(
-    async (searchTerm = "", tag = null, pageReset = false) => {
+    async (searchTerm = "", tag: string | null = null, pageReset = false) => {
       try {
         setLoading(true)
 
@@ -297,26 +297,35 @@ export default function ArticlesPage() {
               </div>
             ) : (
               <>
-                <div className="space-y-6 transition-all duration-500" style={{ opacity: loading ? 0.5 : 1 }}>
+                <div className="transition-all duration-500" style={{ opacity: loading ? 0.5 : 1 }}>
                   {articles.map((article) => (
-                    <Link href={`/articles/${article.id}`} key={article.id}>
-                      <div className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
-                        <div className="flex flex-wrap gap-2 items-center justify-start text-left">
-                          <h2 className="text-base font-semibold">{article.title}</h2>
-                          <span className="text-sm text-muted-foreground">by {article.authorName}</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{article.excerpt}</p>
-                        <div className="flex flex-wrap justify-start items-center gap-2">
-                          {article.tags && article.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {article.tags.map((tag) => (
-                                <p className="text-muted-foreground text-[10px]" key={tag}>#{tag}</p>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                    <div key={article.id} className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
+                      <div className="flex flex-wrap gap-2 items-center justify-start text-left">
+                        <Link href={`/articles/${article.id}`}>
+                          <h2 className="text-base font-semibold hover:text-blue-600 transition-colors cursor-pointer">
+                            {article.title}
+                          </h2>
+                        </Link>
+                        <span className="text-sm text-muted-foreground">
+                          by{" "}
+                          <Link href={`/${article.authorName}`} className="hover:text-blue-600 transition-colors">
+                            {article.authorName}
+                          </Link>
+                        </span>
                       </div>
-                    </Link>
+                      <Link href={`/articles/${article.id}`}>
+                        <p className="text-sm text-muted-foreground cursor-pointer">{article.excerpt}</p>
+                      </Link>
+                      <div className="flex flex-wrap justify-start items-center gap-2">
+                        {article.tags && article.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {article.tags.map((tag) => (
+                              <p className="text-muted-foreground text-[10px]" key={tag}>#{tag}</p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   ))}
                 </div>
                 {/* Only show pagination if there are more than one page of articles */}

@@ -10,6 +10,7 @@ import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import {
@@ -25,6 +26,8 @@ import {
 export default function SettingsPage() {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
+  const [bio, setBio] = useState("")
+  const [profileEmoji, setProfileEmoji] = useState("")
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -46,6 +49,8 @@ export default function SettingsPage() {
     if (userData) {
       setUsername(userData.username)
       setEmail(userData.email)
+      setBio(userData.bio || "")
+      setProfileEmoji(userData.profileEmoji || "")
     }
   }, [user, userData, router])
 
@@ -71,6 +76,8 @@ export default function SettingsPage() {
       await updateDoc(doc(db, "Users", user.uid), {
         username,
         email,
+        bio,
+        profileEmoji,
       })
 
       // Update username in all past articles if it changed
@@ -275,6 +282,33 @@ export default function SettingsPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={!isEditing || isSubmitting}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="profileEmoji">Profile Emoji</Label>
+                <Input
+                  id="profileEmoji"
+                  type="text"
+                  value={profileEmoji}
+                  onChange={(e) => setProfileEmoji(e.target.value)}
+                  placeholder="😊"
+                  maxLength={2}
+                  disabled={!isEditing || isSubmitting}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about yourself..."
+                  rows={3}
+                  maxLength={500}
+                  disabled={!isEditing || isSubmitting}
+                />
+                <p className="text-xs text-muted-foreground">{bio.length}/500 characters</p>
               </div>
 
               {isEditing && email !== userData?.email && (

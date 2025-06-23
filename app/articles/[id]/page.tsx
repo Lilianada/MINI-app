@@ -135,7 +135,11 @@ export default function ArticlePage() {
 
           <div className="flex items-center flex-wrap gap-2 justify-between mb-8">
             <div className="text-sm text-muted-foreground">
-              By {article.authorName} • {formattedDate}
+              By{" "}
+              <Link href={`/${article.authorName}`} className="hover:text-blue-600 transition-colors">
+                {article.authorName}
+              </Link>{" "}
+              • {formattedDate}
             </div>
 
             {article.tags && article.tags.length > 0 && (

@@ -35,6 +35,8 @@ interface AuthContextType {
 interface UserData {
   username: string
   email: string
+  bio?: string
+  profileEmoji?: string
 }
 
 const AuthContext = createContext<AuthContextType>({
