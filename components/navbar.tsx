@@ -81,7 +81,7 @@ export function Navbar() {
                   <IssueDialog />
                   {user ? (
                     <button
-                      className={`px-4 py-2 rounded-md hover:bg-muted text-left flex items-center gap-2 ${loggingOut ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`px-4 py-2 rounded-md hover:bg-muted text-left flex items-center gap-2 transition-all ${loggingOut ? "opacity-50 cursor-not-allowed" : ""}`}
                       onClick={() => {
                         if (!loggingOut) {
                           setIsMobileOpen(false)
@@ -90,8 +90,17 @@ export function Navbar() {
                       }}
                       disabled={loggingOut}
                     >
-                      <LogOut className="w-4 h-4" />
-                      {loggingOut ? "Logging out..." : "Logout"}
+                      {loggingOut ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Signing out...
+                        </>
+                      ) : (
+                        <>
+                          <LogOut className="w-4 h-4" />
+                          Sign out
+                        </>
+                      )}
                     </button>
                   ) : (
                     <>

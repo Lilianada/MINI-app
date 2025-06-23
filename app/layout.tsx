@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Footer } from "@/components/footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { FirebaseInitializer } from "@/components/firebase-initializer"
+import { LogoutOverlay } from "@/components/logout-overlay"
 import Sidebar from "@/components/sidebar"
 
 export default function RootLayout({
@@ -67,6 +68,7 @@ export default function RootLayout({
               {children}
               </main>
             </div>
+            <LogoutOverlay />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

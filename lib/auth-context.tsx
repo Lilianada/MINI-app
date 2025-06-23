@@ -272,16 +272,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       setLoggingOut(true)
+      
+      // Show logout message
+      toast({
+        title: "Signing out...",
+        description: "Thank you for using MINI. See you soon!",
+        duration: 2000,
+      })
+
+      // Clear user data immediately for better UX
+      setUserData(null)
+      
+      // Sign out from Firebase
       await signOut(auth)
 
-      // Wait for 2 seconds before redirecting
+      // Wait for 1.5 seconds to show the goodbye message
       setTimeout(() => {
         router.push("/articles")
         setLoggingOut(false)
-      }, 2000)
+      }, 1500)
     } catch (error) {
       console.error("Logout error:", error)
       setLoggingOut(false)
+      toast({
+        title: "Logout Error",
+        description: "There was an issue signing out. Please try again.",
+        variant: "destructive",
+      })
       throw error
     }
   }

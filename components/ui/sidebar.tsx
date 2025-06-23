@@ -733,9 +733,6 @@ const SidebarMenuSubButton = React.forwardRef<
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 
-import { LogOut } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
-
 // ...existing exports
 export {
   Sidebar,
@@ -767,17 +764,23 @@ export {
 // --- Custom SidebarLogoutButton ---
 import * as React from "react"
 import { Button } from "@/components/ui/button"
+import { LogOut, Loader2 } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export function SidebarLogoutButton() {
   const { logout, loggingOut } = useAuth()
   return (
     <Button
       variant="ghost"
-      className="w-full flex items-center"
+      className={`w-10 h-10 p-0 rounded hover:bg-muted flex items-center justify-center transition-all ${loggingOut ? "opacity-50 cursor-not-allowed" : ""}`}
       onClick={logout}
       disabled={loggingOut}
     >
-      <LogOut className="w-4 h-4" />
+      {loggingOut ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <LogOut className="w-4 h-4" />
+      )}
     </Button>
   )
 }
