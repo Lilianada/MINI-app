@@ -14,6 +14,7 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
+import { HelpModal } from "@/components/help-modal"
 
 interface Article {
   id: string
@@ -163,17 +164,15 @@ export default function ProfilePage() {
       <Navbar />
       <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <h1 className="text-xl font-bold">My Profile</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold">My Profile</h1>
+          </div>
           <div className="flex gap-2">
+             <HelpModal />
             <Link href={`/${userData?.username}`}>
               <Button variant="outline" size="sm">
-                <Globe className="w-4 h-4 mr-2" />
-                View Public Profile
-              </Button>
-            </Link>
-            <Link href="/write">
-              <Button>
-                <PenLineIcon className="w-4 h-4" />
+                <Globe className="w-4 h-4" />
+                Public Profile
               </Button>
             </Link>
           </div>
@@ -236,14 +235,20 @@ export default function ProfilePage() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-4 px-2">My Articles</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+            <h2 className="text-xl font-semibold px-2">My Articles</h2>
+            <Link href="/write">
+              <Button>
+                <PenLineIcon className="w-4 h-4 mr-2" />
+                Write New Article
+              </Button>
+            </Link>
+          </div>
 
           {articles.length === 0 ? (
             <div className="text-center py-12 border rounded-lg">
               <p className="text-muted-foreground mb-4">You haven't written any articles yet</p>
-              <Link href="/write">
-                <Button>Write Your First Article</Button>
-              </Link>
+              <p className="text-sm text-muted-foreground">Click "Write New Article" above to get started!</p>
             </div>
           ) : (
             <div className="space-y-4">

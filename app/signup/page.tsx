@@ -113,7 +113,7 @@ export default function SignupPage() {
       const result = await signup(email, password, username)
 
       if (result.success) {
-        router.push("/articles")
+        router.push("/profile")
       } else {
         console.error("Signup failed:", result.error)
         setErrors({
