@@ -32,9 +32,9 @@ export function Navbar() {
       <div className="mx-auto flex justify-between md:justify-center items-center">
         {/* Mobile: show logo only */}
         <div className="flex  items-center gap-2 ">
-          <Minimize className="h-5 w-5" />
+          {/* <Minimize className="h-5 w-5" /> */}
           <Link href="/" className="font-bold text-lg">
-            MINI
+            MINISPACE
           </Link>
         </div>
         {/* Mobile Navigation */}

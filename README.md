@@ -20,7 +20,7 @@
 ---
 
 ## Overview
-**MINI** is a clean, lightweight web app where users can write, publish, and read articles without the distractions of traditional platforms.
+**MINISPACE** is a clean, lightweight web app where users can write, publish, and read articles without the distractions of traditional platforms.
 
 ---
 
