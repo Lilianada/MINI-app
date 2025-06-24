@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center">
+      <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center">
         <div className="max-w-2xl mx-auto flex flex-col align-center  items-center justify-center space-y-6">
           {/* Title like a note heading */}
           
@@ -50,13 +50,12 @@ export default function AboutPage() {
             {/* Signature-like ending */}
             <div className="mt-8">
               <p className="text-muted-foreground italic text-xs">
-               Lily.
+               - Lily.
               </p>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </>
   )
 }
