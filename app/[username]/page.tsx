@@ -177,7 +177,7 @@ export default function PublicProfilePage() {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
+        <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-146px)]">
           <div className="mb-8">
             <Card>
               <CardHeader>
@@ -223,7 +223,7 @@ export default function PublicProfilePage() {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
+        <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-146px)]">
           <div className="text-center py-16">
             <UserIcon className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
             <h1 className="text-2xl font-bold mb-2">User Not Found</h1>
@@ -244,7 +244,7 @@ export default function PublicProfilePage() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
+      <div className="container mx-auto px-4 py-8 sm:px-8 min-h-[calc(100vh-146px)]">
         {/* Profile Header */}
         <div className="mb-8">
           <Card>

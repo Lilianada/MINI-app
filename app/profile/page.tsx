@@ -153,7 +153,7 @@ export default function ProfilePage() {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto   py-8 px-4 min-h-[calc(100vh-8rem)]">
+        <div className="container mx-auto   py-8 px-4 min-h-[calc(100vh-146px)]">
           <div className="mb-8">
             <Card>
               <CardHeader>
@@ -207,7 +207,7 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
+      <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-146px)]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold">My Profile</h1>

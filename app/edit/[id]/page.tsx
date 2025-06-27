@@ -181,7 +181,7 @@ export default function EditArticlePage() {
     return (
       <>
         <Navbar />
-        <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-8rem)]">
+        <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-146px)]">
           <div className="flex justify-center my-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
@@ -195,7 +195,7 @@ export default function EditArticlePage() {
     return (
       <>
         <Navbar />
-        <div className="container  mx-auto py-8 px-4 min-h-[calc(100vh-8rem)]">
+        <div className="container  mx-auto py-8 px-4 min-h-[calc(100vh-146px)]">
           <div className="text-center py-12">
             <h1 className="text-xl font-bold mb-4">Article not found</h1>
             <p className="text-muted-foreground">The article you're looking for doesn't exist or has been removed.</p>
@@ -209,7 +209,7 @@ export default function EditArticlePage() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto py-8 px-8   min-h-[calc(100vh-8rem)]">
+      <div className="container mx-auto py-8 px-8   min-h-[calc(100vh-146px)]">
         <h1 className="text-xl font-bold mb-8">Edit Article</h1>
 
         <div className="space-y-6">

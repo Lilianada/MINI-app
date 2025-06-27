@@ -52,7 +52,7 @@ export function ArticleList({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="">
       {articles.map((article) => (
         <ArticleCard
           key={article.id}
