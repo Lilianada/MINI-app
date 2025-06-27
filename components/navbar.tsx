@@ -46,11 +46,11 @@ export function Navbar() {
             <SheetContent side="left" className="p-0 w-64 flex flex-col justify-between">
               <div className="flex flex-col gap-6 p-4">
                 <SheetTitle>
-                  <Link href="/articles" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
+                  <Link href="/discover" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
                     MINISPACE
                   </Link>
                 </SheetTitle>
-                <Link href="/articles" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                <Link href="/discover" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <Text className="w-4 h-4" /> Discover
                 </Link>
                 <Link href="/write" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>

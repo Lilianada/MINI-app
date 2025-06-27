@@ -7,8 +7,7 @@ import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Eye, EyeOff, Edit, Mail, UserIcon, PenLineIcon, Globe, PenBoxIcon } from "lucide-react"
+import { Mail, UserIcon, PenLineIcon, Globe, PenBoxIcon } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
 import { HelpModal } from "@/components/help-modal"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
+import { ArticleList } from "@/components/article-list"
 
 interface Article {
   id: string
@@ -24,6 +24,7 @@ interface Article {
   createdAt: any
   published: boolean
   tags: string[]
+  authorName: string
 }
 
 export default function ProfilePage() {
@@ -36,14 +37,46 @@ export default function ProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  const handlePublishToggle = async (articleId: string) => {
+    setUpdatingId(articleId);
+    try {
+      const article = articles.find(a => a.id === articleId);
+      if (!article) return;
+
+      await updateDoc(doc(db, "Articles", articleId), {
+        published: !article.published,
+      });
+      setArticles((prev) => prev.map((a) =>
+        a.id === articleId ? { ...a, published: !a.published } : a
+      ));
+      toast({
+        title: "Success",
+        description: `Article ${article.published ? "moved to Drafts" : "published"}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update publish status.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  const handleDeleteClick = (article: Article) => {
+    setArticleToDelete(article);
+    setShowConfirm(true);
+  }
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
       return;
     }
 
-    // Don't fetch articles until user is loaded and authenticated
-    if (loading || !user) {
+    // Don't fetch articles until user and userData are loaded and authenticated
+    if (loading || !user || !userData) {
       return;
     }
 
@@ -68,6 +101,7 @@ export default function ProfilePage() {
           const fetchedArticles = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
+            authorName: userData?.username || "Unknown"
           })) as Article[]
 
           setArticles(fetchedArticles)
@@ -90,6 +124,7 @@ export default function ProfilePage() {
             const fallbackArticles = fallbackSnapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
+              authorName: userData?.username || "Unknown"
             })) as Article[]
 
             // Sort by createdAt in descending order
@@ -112,9 +147,9 @@ export default function ProfilePage() {
     }
 
     fetchUserArticles()
-  }, [user, router, loading]) // Added loading dependency
+  }, [user, userData, router, loading]) // Added userData dependency
 
-  if (!user || loading) {
+  if (!user || loading || !userData) {
     return (
       <>
         <Navbar />
@@ -249,101 +284,16 @@ export default function ProfilePage() {
             </Link>
           </div>
 
-          {articles.length === 0 ? (
-            <div className="text-center py-12 border rounded-lg">
-              <p className="text-muted-foreground mb-4">You haven't written any articles yet</p>
-              <p className="text-sm text-muted-foreground">Click "Write New Article" above to get started!</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {articles.map((article) => (
-                <div key={article.id} className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-base font-medium">{article.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="focus:outline-none"
-                        title={article.published ? "Unpublish (move to Drafts)" : "Publish"}
-                        onClick={async () => {
-                          setUpdatingId(article.id);
-                          try {
-                            await updateDoc(doc(db, "Articles", article.id), {
-                              published: !article.published,
-                            });
-                            setArticles((prev) => prev.map((a) =>
-                              a.id === article.id ? { ...a, published: !a.published } : a
-                            ));
-                            toast({
-                              title: "Success",
-                              description: `Article ${article.published ? "moved to Drafts" : "published"}.`,
-                            });
-                          } catch (error) {
-                            toast({
-                              title: "Error",
-                              description: "Failed to update publish status.",
-                              variant: "destructive",
-                            });
-                          } finally {
-                            setUpdatingId(null);
-                          }
-                        }}
-                        disabled={updatingId === article.id}
-                      >
-                        {article.published ? (
-                          <Eye className="h-3 w-3 text-green-600" />
-                        ) : (
-                          <EyeOff className="h-3 w-3 text-zinc-500" />
-                        )}
-                      </button>
-                      {article.published ? (
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          Published
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="flex items-center gap-1">
-                          Draft
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground mb-1">{article.excerpt}</p>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-wrap gap-2">
-                      {article.tags &&
-                        article.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-2 items-center">
-                      <Link href={`/edit/${article.id}`}>
-                        <Button variant="outline" size="sm" className="flex items-center gap-1">
-                          <Edit className="h-3 w-3" />
-                          Edit
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        className="flex items-center gap-1"
-                        disabled={deletingId === article.id}
-                        onClick={() => {
-                          setArticleToDelete(article);
-                          setShowConfirm(true);
-                        }}
-                      >
-                        {deletingId === article.id ? "Deleting..." : "Delete"}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <ArticleList
+            articles={articles}
+            variant="profile"
+            onPublishToggle={handlePublishToggle}
+            onDelete={handleDeleteClick}
+            updatingId={updatingId}
+            deletingId={deletingId}
+            emptyMessage="You haven't written any articles yet"
+            emptySubtext='Click "Write New Article" above to get started!'
+          />
         </div>
       </div>
       

@@ -76,7 +76,7 @@ export default function LoginPage() {
           description: "You have been logged in successfully!",
           duration: 3000,
         })
-        router.push("/articles")
+        router.push("/discover")
       } else {
         console.error("Login failed:", result.error)
         setErrors({

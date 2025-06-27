@@ -6,13 +6,13 @@ import { collection, query, where, orderBy, getDocs, doc, getDoc } from "firebas
 import { db } from "@/lib/firebase"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UserIcon, CalendarIcon, Globe } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { useToast } from "@/components/ui/use-toast"
+import { ArticleList } from "@/components/article-list"
 
 interface UserData {
   username: string
@@ -27,7 +27,9 @@ interface Article {
   title: string
   excerpt: string
   createdAt: any
+  published: boolean
   tags: string[]
+  authorName: string
 }
 
 export default function PublicProfilePage() {
@@ -213,7 +215,6 @@ export default function PublicProfilePage() {
             </div>
           </div>
         </div>
-        <Footer />
       </>
     )
   }
@@ -229,12 +230,11 @@ export default function PublicProfilePage() {
             <p className="text-muted-foreground mb-6">
               The user {username} doesn't exist or may have changed their username.
             </p>
-            <Link href="/articles">
-              <Button>Browse Articles</Button>
+            <Link href="/discover">
+              <Button>Discover Articles</Button>
             </Link>
           </div>
         </div>
-        <Footer />
       </>
     )
   }
@@ -266,7 +266,7 @@ export default function PublicProfilePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Globe className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground lowercase">
                     minispace.dev/{userData?.username}
                   </span>
                 </div>
@@ -288,51 +288,15 @@ export default function PublicProfilePage() {
             </h2>
           </div>
 
-          {articles.length === 0 ? (
-            <div className="text-center py-12 border rounded-lg">
-              <p className="text-muted-foreground mb-4">
-                {userData?.username} hasn't published any articles yet
-              </p>
-              <Link href="/articles">
-                <Button variant="outline">Browse Other Articles</Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="">
-              {articles.map((article) => (
-                <div key={article.id} className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
-                  <div className="flex flex-wrap gap-2 items-center justify-start text-left">
-                    <Link href={`/articles/${article.id}`}>
-                      <h2 className="text-base font-semibold hover:text-blue-600 transition-colors cursor-pointer">
-                        {article.title}
-                      </h2>
-                    </Link>
-                    <span className="text-sm text-muted-foreground">
-                      by{" "}
-                      <Link href={`/${userData?.username}`} className="hover:text-blue-600 transition-colors">
-                        {userData?.username}
-                      </Link>
-                    </span>
-                  </div>
-                  <Link href={`/articles/${article.id}`}>
-                    <p className="text-sm text-muted-foreground cursor-pointer">{article.excerpt}</p>
-                  </Link>
-                  <div className="flex flex-wrap justify-start items-center gap-2">
-                    {article.tags && article.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {article.tags.map((tag) => (
-                          <p className="text-muted-foreground text-[10px]" key={tag}>#{tag}</p>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <ArticleList
+            articles={articles}
+            variant="public"
+            showAuthor={true}
+            linkPrefix="/discover"
+            emptyMessage={`${userData?.username} hasn't published any articles yet`}
+          />
         </div>
       </div>
-      <Footer />
     </>
   )
 }

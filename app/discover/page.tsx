@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import Link from "next/link"
+import { ArticleList } from "@/components/article-list"
 
 interface Article {
   id: string
@@ -27,6 +28,7 @@ interface Article {
   authorName: string
   tags: string[]
   createdAt: any
+  published: boolean
 }
 
 const ARTICLES_PER_PAGE = 20
@@ -298,35 +300,13 @@ export default function ArticlesPage() {
             ) : (
               <>
                 <div className="transition-all duration-500" style={{ opacity: loading ? 0.5 : 1 }}>
-                  {articles.map((article) => (
-                    <div key={article.id} className="py-4 px-2 rounded-md hover:bg-muted/50 transition-colors">
-                      <div className="flex flex-wrap gap-2 items-center justify-start text-left">
-                        <Link href={`/articles/${article.id}`}>
-                          <h2 className="text-base font-semibold hover:text-blue-600 transition-colors cursor-pointer">
-                            {article.title}
-                          </h2>
-                        </Link>
-                        <span className="text-sm text-muted-foreground">
-                          by{" "}
-                          <Link href={`/${article.authorName}`} className="hover:text-blue-600 transition-colors">
-                            {article.authorName}
-                          </Link>
-                        </span>
-                      </div>
-                      <Link href={`/articles/${article.id}`}>
-                        <p className="text-sm text-muted-foreground cursor-pointer">{article.excerpt}</p>
-                      </Link>
-                      <div className="flex flex-wrap justify-start items-center gap-2">
-                        {article.tags && article.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {article.tags.map((tag) => (
-                              <p className="text-muted-foreground text-[10px]" key={tag}>#{tag}</p>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                  <ArticleList
+                    articles={articles}
+                    variant="discover"
+                    showAuthor={true}
+                    linkPrefix="/discover"
+                    emptyMessage="No articles found"
+                  />
                 </div>
                 {/* Only show pagination if there are more than one page of articles */}
                 {showPagination && (

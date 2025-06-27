@@ -12,7 +12,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden sticky top-0 h-screen w-16 md:flex flex-col items-center justify-center gap-6 py-8 bg-background">
       <SidebarTooltip label="Articles">
-        <Link href="/articles" className="flex items-center justify-center w-10 h-10 rounded hover:bg-muted">
+        <Link href="/discover" className="flex items-center justify-center w-10 h-10 rounded hover:bg-muted">
           <BookOpen className="w-4 h-4" />
         </Link>
       </SidebarTooltip>

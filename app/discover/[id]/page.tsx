@@ -71,7 +71,7 @@ export default function ArticlePage() {
       <>
         <Navbar />
         <div className="container mx-auto py-8 px-4   min-h-[calc(100vh-8rem)]">
-          <Link href="/articles">
+          <Link href="/discover">
             <Button variant="outline" className="mb-6">&larr; Back to Articles</Button>
           </Link>
           <article className="prose dark:prose-invert max-w-none">
@@ -105,7 +105,7 @@ export default function ArticlePage() {
           <div className="text-center py-12">
             <h1 className="text-xl font-bold mb-4">Article not found</h1>
             <p className="text-muted-foreground">The article you're looking for doesn't exist or has been removed.</p>
-            <Link href="/articles">
+            <Link href="/discover">
               <Button variant="outline" className="mt-4">
                 Back to Articles
               </Button>
@@ -127,7 +127,7 @@ export default function ArticlePage() {
     <>
       <Navbar />
       <div className="container mx-auto py-8 px-8 min-h-[calc(100vh-8rem)]">
-        <Link href="/articles">
+        <Link href="/discover">
           <Button variant="outline" className="mb-6">&larr; Back to Articles</Button>
         </Link>
         <article className="prose dark:prose-invert max-w-none">
@@ -158,7 +158,6 @@ export default function ArticlePage() {
           </div>
         </article>
       </div>
-      <Footer />
     </>
   )
 }

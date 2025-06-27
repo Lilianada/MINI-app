@@ -19,7 +19,7 @@ export default function Home() {
       {/* Navbar */}
       <nav className="flex justify-between items-center p-4 ">
         <div>
-          <Link href="/articles" className="hover:text-blue-500 transition-colors text-sm">
+          <Link href="/discover" className="hover:text-blue-500 transition-colors text-sm">
             Explore Spaces
           </Link>
         </div>

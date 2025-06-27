@@ -63,7 +63,7 @@ export function HelpModal() {
                 <Badge variant="outline" className="mt-1">3</Badge>
                 <div>
                   <p className="font-medium">Discover great content</p>
-                  <p className="text-sm text-muted-foreground">Browse articles from other writers and find interesting topics.</p>
+                  <p className="text-sm text-muted-foreground">Discover Articles from other writers and find interesting topics.</p>
                 </div>
               </div>
             </div>

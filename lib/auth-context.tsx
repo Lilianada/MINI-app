@@ -356,7 +356,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Wait for 1.5 seconds to show the goodbye message
       setTimeout(() => {
-        router.push("/articles")
+        router.push("/discover")
         setLoggingOut(false)
       }, 1500)
     } catch (error) {

@@ -203,7 +203,6 @@ export default function IssuesPage() {
           </>
         )}
       </div>
-      <Footer />
     </>
   )
 }
