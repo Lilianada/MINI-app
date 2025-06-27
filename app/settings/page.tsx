@@ -339,7 +339,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="customLayout">Custom Profile Layout</Label>
+                <Label htmlFor="customLayout">Public Profile Layout</Label>
                 <Textarea
                   id="customLayout"
                   value={customLayout}
