@@ -4,12 +4,16 @@ import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import { ProfileCard } from "@/components/profile-card"
 import { PostsDisplay } from "@/components/posts-display"
+import { TagsDisplay } from "@/components/tags-display"
 
 interface UserData {
   username: string
   email: string
   bio?: string
   profileEmoji?: string
+  bannerImage?: string
+  bannerPreset?: string
+  accentColor?: string
   createdAt?: any
 }
 
@@ -27,11 +31,15 @@ interface TokenParserProps {
   content: string
   userData: UserData
   articles: Article[]
+  allArticles?: Article[]  // For tags display to show all available tags
   linkPrefix?: string
+  onTagClick?: (tag: string | null) => void
+  selectedTag?: string | null
 }
 
-export function parseTokens({ content, userData, articles, linkPrefix = "/discover" }: TokenParserProps): React.ReactNode[] {
+export function parseTokens({ content, userData, articles, allArticles, linkPrefix = "/discover", onTagClick, selectedTag }: TokenParserProps): React.ReactNode[] {
   const tokens = content.split(/(\{[^}]+\})/g)
+  const accentColor = userData.accentColor || '#3b82f6' // default blue
   
   return tokens.map((token, index) => {
     switch (token) {
@@ -39,7 +47,10 @@ export function parseTokens({ content, userData, articles, linkPrefix = "/discov
         return <ProfileCard key={index} userData={userData} />
       
       case '{displayPosts}':
-        return <PostsDisplay key={index} articles={articles} linkPrefix={linkPrefix} />
+        return <PostsDisplay key={index} articles={articles} linkPrefix={linkPrefix} accentColor={accentColor} />
+      
+      case '{displayTags}':
+        return <TagsDisplay key={index} articles={allArticles || articles} accentColor={accentColor} onTagClick={onTagClick} selectedTag={selectedTag} />
       
       default:
         // Render markdown for non-token content, preserving line breaks
@@ -58,7 +69,7 @@ export function parseTokens({ content, userData, articles, linkPrefix = "/discov
               ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-3" {...props} />,
               ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-3" {...props} />,
               li: ({node, ...props}) => <li className="mb-1" {...props} />,
-              blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-3" {...props} />,
+              blockquote: ({node, ...props}) => <blockquote className="border-l-4 pl-4 italic mb-3" style={{ borderColor: accentColor }} {...props} />,
               code: ({node, className, children, ...props}: any) => {
                 const isInline = !className?.includes('language-')
                 return isInline ? 
@@ -66,7 +77,7 @@ export function parseTokens({ content, userData, articles, linkPrefix = "/discov
                   <code className="block bg-gray-100 p-3 rounded mb-3 text-sm overflow-x-auto" {...props}>{children}</code>
               },
               pre: ({node, ...props}) => <pre className="bg-gray-100 p-3 rounded mb-3 text-sm overflow-x-auto" {...props} />,
-              a: ({node, ...props}) => <a className="text-blue-600 hover:underline" {...props} />,
+              a: ({node, ...props}) => <a className="hover:underline" style={{ color: accentColor }} {...props} />,
               strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
               em: ({node, ...props}) => <em className="italic" {...props} />,
             }}

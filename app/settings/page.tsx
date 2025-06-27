@@ -27,6 +27,8 @@ export default function SettingsPage() {
   const [bio, setBio] = useState("")
   const [profileEmoji, setProfileEmoji] = useState("")
   const [customLayout, setCustomLayout] = useState("")
+  const [bannerPreset, setBannerPreset] = useState("")
+  const [accentColor, setAccentColor] = useState("")
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -50,6 +52,8 @@ export default function SettingsPage() {
       setEmail(userData.email)
       setBio(userData.bio || "")
       setProfileEmoji(userData.profileEmoji || "")
+      setBannerPreset(userData.bannerPreset || "")
+      setAccentColor(userData.accentColor || "#3b82f6")
       setCustomLayout(userData.customLayout || `{displayProfileCard}
 
 {displayPosts}`)
@@ -88,6 +92,8 @@ export default function SettingsPage() {
         email,
         bio,
         profileEmoji,
+        bannerPreset,
+        accentColor,
         customLayout,
       })
 
@@ -325,6 +331,56 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="bannerPreset">Banner Style</Label>
+                <select
+                  id="bannerPreset"
+                  value={bannerPreset}
+                  onChange={(e) => setBannerPreset(e.target.value)}
+                  disabled={!isEditing || isSubmitting}
+                  className="w-full p-2 border border-input rounded-md bg-background"
+                >
+                  <option value="">Default Gray</option>
+                  <option value="garden-green">Garden Green</option>
+                  <option value="sunset-orange">Sunset Orange</option>
+                  <option value="ocean-blue">Ocean Blue</option>
+                  <option value="lavender-purple">Lavender Purple</option>
+                  <option value="warm-earth">Warm Earth</option>
+                  <option value="cool-gray">Cool Gray</option>
+                  <option value="minimal-dots">Minimal Dots</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="accentColor">Accent Color</Label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="accentColor"
+                    type="color"
+                    value={accentColor}
+                    onChange={(e) => setAccentColor(e.target.value)}
+                    disabled={!isEditing || isSubmitting}
+                    className="w-12 h-8 border border-input rounded cursor-pointer disabled:cursor-not-allowed"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Used for links, borders, and highlights
+                  </span>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6b7280'].map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => setAccentColor(color)}
+                      disabled={!isEditing || isSubmitting}
+                      className="w-6 h-6 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform disabled:cursor-not-allowed"
+                      style={{ backgroundColor: color }}
+                      title={`Set accent color to ${color}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>
                 <Textarea
                   id="bio"
@@ -346,7 +402,11 @@ export default function SettingsPage() {
                   onChange={(e) => setCustomLayout(e.target.value)}
                   placeholder="{displayProfileCard}
 
-{displayPosts}"
+## My Articles
+{displayPosts}
+
+## Topics I Write About
+{displayTags}"
                   rows={6}
                   disabled={!isEditing || isSubmitting}
                 />
@@ -354,7 +414,8 @@ export default function SettingsPage() {
                   <p>Available tokens:</p>
                   <p><code className="bg-muted px-1 rounded">{"{displayProfileCard}"}</code> - Shows your profile information</p>
                   <p><code className="bg-muted px-1 rounded">{"{displayPosts}"}</code> - Shows your published articles</p>
-                  <p>You can add any text between tokens and they will be displayed as-is.</p>
+                  <p><code className="bg-muted px-1 rounded">{"{displayTags}"}</code> - Shows all tags from your articles</p>
+                  <p>You can add any text between tokens and they will be displayed as-is. Markdown is supported!</p>
                 </div>
               </div>
 

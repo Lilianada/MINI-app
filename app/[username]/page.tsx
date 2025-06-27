@@ -16,6 +16,9 @@ interface UserData {
   email: string
   bio?: string
   profileEmoji?: string
+  bannerImage?: string
+  bannerPreset?: string
+  accentColor?: string
   createdAt?: any
   customLayout?: string
 }
@@ -35,6 +38,8 @@ export default function PublicProfilePage() {
   const username = params.username as string
   const [userData, setUserData] = useState<UserData | null>(null)
   const [articles, setArticles] = useState<Article[]>([])
+  const [filteredArticles, setFilteredArticles] = useState<Article[]>([])
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [userNotFound, setUserNotFound] = useState(false)
   const { toast } = useToast()
@@ -145,6 +150,21 @@ export default function PublicProfilePage() {
     fetchUserProfile()
   }, [username, toast])
 
+  // Filter articles based on selected tag
+  useEffect(() => {
+    if (selectedTag) {
+      setFilteredArticles(articles.filter(article => 
+        article.tags?.includes(selectedTag)
+      ))
+    } else {
+      setFilteredArticles(articles)
+    }
+  }, [articles, selectedTag])
+
+  const handleTagClick = (tag: string | null) => {
+    setSelectedTag(tag)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6">
@@ -220,12 +240,15 @@ export default function PublicProfilePage() {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="space-y-8">
+      <div className="">
         {parseTokens({
           content: layoutContent,
           userData,
-          articles,
-          linkPrefix: "/discover"
+          articles: filteredArticles,
+          allArticles: articles,
+          linkPrefix: "/discover",
+          onTagClick: handleTagClick,
+          selectedTag
         })}
       </div>
     </div>

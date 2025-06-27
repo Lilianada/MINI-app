@@ -27,6 +27,9 @@ interface UserData {
   bio?: string
   profileEmoji?: string
   customLayout?: string
+  bannerImage?: string
+  bannerPreset?: string
+  accentColor?: string
   createdAt?: any
 }
 
