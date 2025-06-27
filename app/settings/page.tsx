@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { doc, updateDoc, collection, query, where, getDocs } from "firebase/firestore"
-import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth"
-import { db } from "@/lib/firebase"
+import { initializeFirebase } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
@@ -28,6 +26,7 @@ export default function SettingsPage() {
   const [email, setEmail] = useState("")
   const [bio, setBio] = useState("")
   const [profileEmoji, setProfileEmoji] = useState("")
+  const [customLayout, setCustomLayout] = useState("")
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -51,6 +50,9 @@ export default function SettingsPage() {
       setEmail(userData.email)
       setBio(userData.bio || "")
       setProfileEmoji(userData.profileEmoji || "")
+      setCustomLayout(userData.customLayout || `{displayProfileCard}
+
+{displayPosts}`)
     }
   }, [user, userData, router])
 
@@ -69,6 +71,14 @@ export default function SettingsPage() {
     try {
       setIsSubmitting(true)
       
+      // Initialize Firebase
+      const { db } = await initializeFirebase()
+      if (!db) {
+        throw new Error("Firestore is not initialized")
+      }
+
+      const { doc, updateDoc, collection, query, where, getDocs } = await import("firebase/firestore")
+      
       // Check if username has changed
       const usernameChanged = username !== userData?.username
 
@@ -78,6 +88,7 @@ export default function SettingsPage() {
         email,
         bio,
         profileEmoji,
+        customLayout,
       })
 
       // Update username in all past articles if it changed
@@ -92,7 +103,7 @@ export default function SettingsPage() {
           const articlesSnapshot = await getDocs(articlesQuery)
           
           // Update each article with the new username
-          const updatePromises = articlesSnapshot.docs.map(articleDoc => {
+          const updatePromises = articlesSnapshot.docs.map((articleDoc: any) => {
             return updateDoc(doc(db, "Articles", articleDoc.id), {
               authorName: username
             })
@@ -125,6 +136,12 @@ export default function SettingsPage() {
           return
         }
 
+        const { auth } = await initializeFirebase()
+        if (!auth) {
+          throw new Error("Firebase Auth is not initialized")
+        }
+
+        const { updateEmail, reauthenticateWithCredential, EmailAuthProvider } = await import("firebase/auth")
         const credential = EmailAuthProvider.credential(userData?.email || "", currentPassword)
 
         await reauthenticateWithCredential(user, credential)
@@ -173,6 +190,12 @@ export default function SettingsPage() {
     try {
       setIsSubmitting(true)
 
+      const { auth } = await initializeFirebase()
+      if (!auth) {
+        throw new Error("Firebase Auth is not initialized")
+      }
+
+      const { updatePassword, reauthenticateWithCredential, EmailAuthProvider } = await import("firebase/auth")
       const credential = EmailAuthProvider.credential(userData?.email || "", currentPassword)
 
       await reauthenticateWithCredential(user, credential)
@@ -213,6 +236,12 @@ export default function SettingsPage() {
     try {
       setIsSubmitting(true)
 
+      const { auth } = await initializeFirebase()
+      if (!auth) {
+        throw new Error("Firebase Auth is not initialized")
+      }
+
+      const { deleteUser, reauthenticateWithCredential, EmailAuthProvider } = await import("firebase/auth")
       const credential = EmailAuthProvider.credential(userData?.email || "", deleteConfirmPassword)
 
       await reauthenticateWithCredential(user, credential)
@@ -240,7 +269,6 @@ export default function SettingsPage() {
   if (!user) {
     return (
       <>
-        <Navbar />
         <div className="container mx-auto py-8 px-4">
           <div className="flex justify-center my-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -252,7 +280,6 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Navbar />
       <div className="mx-auto py-8 px-4 sm:px-8">
         <h1 className="text-xl font-semibold mb-8">Settings</h1>
 
@@ -309,6 +336,26 @@ export default function SettingsPage() {
                   disabled={!isEditing || isSubmitting}
                 />
                 <p className="text-xs text-muted-foreground">{bio.length}/500 characters</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customLayout">Custom Profile Layout</Label>
+                <Textarea
+                  id="customLayout"
+                  value={customLayout}
+                  onChange={(e) => setCustomLayout(e.target.value)}
+                  placeholder="{displayProfileCard}
+
+{displayPosts}"
+                  rows={6}
+                  disabled={!isEditing || isSubmitting}
+                />
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>Available tokens:</p>
+                  <p><code className="bg-muted px-1 rounded">{"{displayProfileCard}"}</code> - Shows your profile information</p>
+                  <p><code className="bg-muted px-1 rounded">{"{displayPosts}"}</code> - Shows your published articles</p>
+                  <p>You can add any text between tokens and they will be displayed as-is.</p>
+                </div>
               </div>
 
               {isEditing && email !== userData?.email && (

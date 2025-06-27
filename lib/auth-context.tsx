@@ -3,21 +3,10 @@
 import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import {
-  type User,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-  fetchSignInMethodsForEmail,
-  setPersistence,
-  browserLocalPersistence,
-} from "firebase/auth"
-import { doc, setDoc, getDoc } from "firebase/firestore"
-import { auth, db } from "./firebase"
+import type { User } from "firebase/auth"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
+import { initializeFirebase } from "./firebase"
 
 interface AuthContextType {
   user: User | null
@@ -37,6 +26,8 @@ interface UserData {
   email: string
   bio?: string
   profileEmoji?: string
+  customLayout?: string
+  createdAt?: any
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -115,114 +106,138 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Check if Firebase is initialized
   useEffect(() => {
-    const checkFirebase = () => {
-      const isInitialized = !!auth && !!db
-      setIsFirebaseInitialized(isInitialized)
+    const checkFirebase = async () => {
+      try {
+        const { auth, db } = await initializeFirebase()
+        const isInitialized = !!auth && !!db
+        setIsFirebaseInitialized(isInitialized)
 
-      if (!isInitialized) {
-        console.error("Firebase auth or Firestore is not initialized")
-      }
-
-      return isInitialized
-    }
-
-    // Check immediately and set up an interval to keep checking
-    const isInitialized = checkFirebase()
-
-    if (!isInitialized) {
-      // If not initialized, check again in 2 seconds
-      const interval = setInterval(() => {
-        if (checkFirebase()) {
-          clearInterval(interval)
+        if (!isInitialized) {
+          console.error("Firebase auth or Firestore is not initialized")
         }
-      }, 2000)
 
-      return () => clearInterval(interval)
+        return isInitialized
+      } catch (error) {
+        console.error("Error initializing Firebase:", error)
+        setIsFirebaseInitialized(false)
+        return false
+      }
     }
+
+    // Check Firebase initialization
+    checkFirebase()
   }, [])
 
   // Set up auth state listener
   useEffect(() => {
-    if (!auth) {
+    if (!isFirebaseInitialized) {
       setLoading(false)
       return () => {}
     }
 
-    // Set persistence to local
-    setPersistence(auth, browserLocalPersistence).catch((error) => {
-      console.error("Error setting auth persistence:", error)
-    })
-
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      async (user) => {
-     
-        setUser(user)
-
-        if (user && db) {
-          try {
-            // Fetch user data from Firestore
-            const userDocRef = doc(db, "Users", user.uid)
-            const userDoc = await getDoc(userDocRef)
-
-            if (userDoc.exists()) {
-              const userData = userDoc.data() as UserData
-              setUserData(userData)
-              
-              // Save to localStorage
-              saveUserToStorage(user, userData)
-
-              // Show welcome message based on time of day (only if not already shown)
-              const lastWelcome = localStorage.getItem('minispace_last_welcome')
-              const today = new Date().toDateString()
-              
-              if (lastWelcome !== today) {
-                const hour = new Date().getHours()
-                let greeting = "Hello"
-
-                if (hour < 12) greeting = "Good morning"
-                else if (hour < 18) greeting = "Good afternoon"
-                else greeting = "Good evening"
-
-                toast({
-                  title: `${greeting}, ${userData.username}!`,
-                  description:
-                    hour < 12
-                      ? "Start your day with a great read."
-                      : hour < 18
-                        ? "Take a break with some interesting articles."
-                        : "Unwind with some reading or writing.",
-                  duration: 5000,
-                })
-                
-                localStorage.setItem('minispace_last_welcome', today)
-              }
-            } else {
-              console.warn("User document does not exist for authenticated user")
-            }
-          } catch (error) {
-            console.error("Error fetching user data:", error)
-          }
-        } else {
-          setUserData(null)
-          clearUserFromStorage()
+    const setupAuthListener = async () => {
+      try {
+        const { auth, db } = await initializeFirebase()
+        
+        if (!auth) {
+          setLoading(false)
+          return () => {}
         }
 
-        setLoading(false)
-      },
-      (error) => {
-        console.error("Auth state change error:", error)
-        setLoading(false)
-      },
-    )
+        const { onAuthStateChanged, setPersistence, browserLocalPersistence } = await import("firebase/auth")
+        const { doc, getDoc } = await import("firebase/firestore")
 
-    return () => unsubscribe()
+        // Set persistence to local
+        setPersistence(auth, browserLocalPersistence).catch((error: any) => {
+          console.error("Error setting auth persistence:", error)
+        })
+
+        const unsubscribe = onAuthStateChanged(
+          auth,
+          async (user: User | null) => {
+         
+            setUser(user)
+
+            if (user && db) {
+              try {
+                // Fetch user data from Firestore
+                const userDocRef = doc(db, "Users", user.uid)
+                const userDoc = await getDoc(userDocRef)
+
+                if (userDoc.exists()) {
+                  const userData = userDoc.data() as UserData
+                  setUserData(userData)
+                  
+                  // Save to localStorage
+                  saveUserToStorage(user, userData)
+
+                  // Show welcome message based on time of day (only if not already shown)
+                  const lastWelcome = localStorage.getItem('minispace_last_welcome')
+                  const today = new Date().toDateString()
+                  
+                  if (lastWelcome !== today) {
+                    const hour = new Date().getHours()
+                    let greeting = "Hello"
+
+                    if (hour < 12) greeting = "Good morning"
+                    else if (hour < 18) greeting = "Good afternoon"
+                    else greeting = "Good evening"
+
+                    toast({
+                      title: `${greeting}, ${userData.username}!`,
+                      description:
+                        hour < 12
+                          ? "Start your day with a great read."
+                          : hour < 18
+                            ? "Take a break with some interesting articles."
+                            : "Unwind with some reading or writing.",
+                      duration: 5000,
+                    })
+                    
+                    localStorage.setItem('minispace_last_welcome', today)
+                  }
+                } else {
+                  console.warn("User document does not exist for authenticated user")
+                }
+              } catch (error) {
+                console.error("Error fetching user data:", error)
+              }
+            } else {
+              setUserData(null)
+              clearUserFromStorage()
+            }
+
+            setLoading(false)
+          },
+          (error: any) => {
+            console.error("Auth state change error:", error)
+            setLoading(false)
+          },
+        )
+
+        return unsubscribe
+      } catch (error) {
+        console.error("Error setting up auth listener:", error)
+        setLoading(false)
+        return () => {}
+      }
+    }
+
+    setupAuthListener().then((unsubscribe) => {
+      return unsubscribe
+    })
+
+    return () => {
+      // The unsubscribe function will be handled by the async setup
+    }
   }, [toast, isFirebaseInitialized])
 
   const checkEmailExists = async (email: string): Promise<boolean> => {
-    if (!auth) return false
-
     try {
+      const { auth } = await initializeFirebase()
+      if (!auth) return false
+
+      const { fetchSignInMethodsForEmail } = await import("firebase/auth")
       const methods = await fetchSignInMethodsForEmail(auth, email)
       return methods.length > 0
     } catch (error) {
@@ -232,14 +247,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signup = async (email: string, password: string, username: string) => {
-    if (!auth || !db) {
-      return {
-        success: false,
-        error: "Firebase is not initialized. Please check your configuration.",
-      }
-    }
-
     try {
+      const { auth, db } = await initializeFirebase()
+      
+      if (!auth || !db) {
+        return {
+          success: false,
+          error: "Firebase is not initialized. Please check your configuration.",
+        }
+      }
+
+      const { createUserWithEmailAndPassword } = await import("firebase/auth")
+      const { doc, setDoc } = await import("firebase/firestore")
      
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
@@ -290,14 +309,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    if (!auth) {
-      return {
-        success: false,
-        error: "Firebase is not initialized. Please check your configuration.",
-      }
-    }
-
     try {
+      const { auth } = await initializeFirebase()
+      
+      if (!auth) {
+        return {
+          success: false,
+          error: "Firebase is not initialized. Please check your configuration.",
+        }
+      }
+
+      const { signInWithEmailAndPassword } = await import("firebase/auth")
       await signInWithEmailAndPassword(auth, email, password)
       return { success: true }
     } catch (error) {
@@ -333,11 +355,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    if (!auth) {
-      throw new Error("Firebase is not initialized")
-    }
-
     try {
+      const { auth } = await initializeFirebase()
+      
+      if (!auth) {
+        throw new Error("Firebase is not initialized")
+      }
+
+      const { signOut } = await import("firebase/auth")
+
       setLoggingOut(true)
       
       // Show logout message
@@ -372,14 +398,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const resetPassword = async (email: string) => {
-    if (!auth) {
-      return {
-        success: false,
-        error: "Firebase is not initialized. Please check your configuration.",
-      }
-    }
-
     try {
+      const { auth } = await initializeFirebase()
+      
+      if (!auth) {
+        return {
+          success: false,
+          error: "Firebase is not initialized. Please check your configuration.",
+        }
+      }
+
+      const { sendPasswordResetEmail } = await import("firebase/auth")
       await sendPasswordResetEmail(auth, email)
       return { success: true }
     } catch (error) {

@@ -149,7 +149,7 @@ export default function WritePage() {
 
   return (
     <>
-      <Navbar />
+      
       <div className="container mx-auto py-8 sm:px-8">
         <div className="flex items-center mb-6">
           <h1 className="text-xl font-semibold">Start writing...</h1>

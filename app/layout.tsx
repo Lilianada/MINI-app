@@ -4,10 +4,10 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Footer } from "@/components/footer"
+import { Navbar } from "@/components/navbar"
 import { AuthProvider } from "@/lib/auth-context"
 import { FirebaseInitializer } from "@/components/firebase-initializer"
 import { LogoutOverlay } from "@/components/logout-overlay"
-import Sidebar from "@/components/sidebar"
 
 export default function RootLayout({
   children,
@@ -65,6 +65,7 @@ export default function RootLayout({
             <div className=" max-w-4xl mx-auto w-full flex relative">
            
             <main className="flex-1 flex flex-col  border-x">
+              <Navbar />
               {children}
               <Footer />
               </main>

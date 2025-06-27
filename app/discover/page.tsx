@@ -254,7 +254,7 @@ export default function ArticlesPage() {
 
   return (
     <>
-      <Navbar />
+      
       <div className="py-8 px-4 sm:px-8 min-h-[calc(100vh-146px)] ">
 
         <div className="mb-8">

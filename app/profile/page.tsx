@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { collection, query, where, orderBy, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
-import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Mail, UserIcon, PenLineIcon, Globe, PenBoxIcon } from "lucide-react"
 import Link from "next/link"
@@ -152,8 +151,7 @@ export default function ProfilePage() {
   if (!user || loading || !userData) {
     return (
       <>
-        <Navbar />
-        <div className="container mx-auto   py-8 px-4 min-h-[calc(100vh-146px)]">
+        <div className="container mx-auto   py-8 px-4 min-h-[calc(100vh-8rem)]">
           <div className="mb-8">
             <Card>
               <CardHeader>
@@ -206,8 +204,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <Navbar />
-      <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-146px)]">
+      <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold">My Profile</h1>
