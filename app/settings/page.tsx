@@ -28,6 +28,7 @@ export default function SettingsPage() {
   const [profileEmoji, setProfileEmoji] = useState("")
   const [customLayout, setCustomLayout] = useState("")
   const [bannerPreset, setBannerPreset] = useState("")
+  const [bannerImage, setBannerImage] = useState("")
   const [accentColor, setAccentColor] = useState("")
   // Enhanced customization options
   const [profileTheme, setProfileTheme] = useState("minimal") // minimal, modern, creative
@@ -66,6 +67,7 @@ export default function SettingsPage() {
       setBio(userData.bio || "")
       setProfileEmoji(userData.profileEmoji || "")
       setBannerPreset(userData.bannerPreset || "")
+      setBannerImage(userData.bannerImage || "")
       setAccentColor(userData.accentColor || "#3b82f6")
       setCustomLayout(userData.customLayout || `{displayProfileCard}
 
@@ -120,6 +122,7 @@ export default function SettingsPage() {
         bio,
         profileEmoji,
         bannerPreset,
+        bannerImage,
         accentColor,
         customLayout,
         // Enhanced customization options

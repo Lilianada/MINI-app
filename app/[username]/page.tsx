@@ -249,18 +249,37 @@ export default function PublicProfilePage() {
 
   const layoutContent = userData.customLayout || defaultLayout
 
+  // Get layout-specific classes
+  const getLayoutClasses = () => {
+    switch (userData.profileLayout) {
+      case 'sidebar':
+        return 'max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8'
+      case 'centered':
+        return 'max-w-4xl mx-auto'
+      default:
+        return 'max-w-6xl mx-auto'
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="">
-        {parseTokens({
-          content: layoutContent,
-          userData,
-          articles: filteredArticles,
-          allArticles: articles,
-          linkPrefix: "/discover",
-          onTagClick: handleTagClick,
-          selectedTag
-        })}
+    <div className="min-h-screen bg-background">
+      {/* Custom CSS */}
+      {userData.customCSS && (
+        <style dangerouslySetInnerHTML={{ __html: userData.customCSS }} />
+      )}
+      
+      <div className="p-6">
+        <div className={getLayoutClasses()}>
+          {parseTokens({
+            content: layoutContent,
+            userData,
+            articles: filteredArticles,
+            allArticles: articles,
+            linkPrefix: "/discover",
+            onTagClick: handleTagClick,
+            selectedTag
+          })}
+        </div>
       </div>
     </div>
   )

@@ -2,7 +2,8 @@
 
 import React from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { UserIcon, CalendarIcon, Globe } from "lucide-react"
+import { UserIcon, CalendarIcon, Globe, ExternalLink, Twitter, Github, Linkedin } from "lucide-react"
+import Link from "next/link"
 
 interface UserData {
   username: string
@@ -13,6 +14,18 @@ interface UserData {
   bannerPreset?: string
   accentColor?: string
   createdAt?: any
+  // Enhanced customization options
+  profileTheme?: string
+  socialLinks?: {
+    website?: string
+    twitter?: string
+    github?: string
+    linkedin?: string
+  }
+  headerText?: string
+  footerText?: string
+  showJoinDate?: boolean
+  profileLayout?: string
 }
 
 interface ProfileCardProps {
@@ -21,6 +34,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ userData }: ProfileCardProps) {
   const joinDate = userData.createdAt?.toDate?.()
+  const showJoinDate = userData.showJoinDate !== false // default to true
   
   // Predefined banner patterns
   const bannerPresets = {
@@ -52,45 +66,126 @@ export function ProfileCard({ userData }: ProfileCardProps) {
     ? bannerPresets[userData.bannerPreset as keyof typeof bannerPresets]
     : 'bg-gradient-to-r from-gray-200 to-gray-300'
 
+  // Get theme-specific styling
+  const getThemeClasses = () => {
+    switch (userData.profileTheme) {
+      case 'modern':
+        return {
+          card: 'shadow-xl border-0 bg-gradient-to-br from-background to-background/50',
+          header: 'bg-gradient-to-r from-background/80 to-background/40 backdrop-blur-sm',
+          avatar: 'ring-4 ring-white/50 shadow-2xl'
+        }
+      case 'creative':
+        return {
+          card: 'shadow-2xl border-2 transform hover:scale-[1.02] transition-transform duration-300',
+          header: 'bg-gradient-to-r from-primary/5 to-secondary/5',
+          avatar: 'ring-4 shadow-xl transform rotate-3 hover:rotate-0 transition-transform duration-300'
+        }
+      default: // minimal
+        return {
+          card: 'shadow-sm border',
+          header: '',
+          avatar: 'border-4 border-white shadow-lg'
+        }
+    }
+  }
+
+  const themeClasses = getThemeClasses()
+  
+  // Social links configuration
+  const socialLinksConfig = [
+    { key: 'website', icon: ExternalLink, label: 'Website' },
+    { key: 'twitter', icon: Twitter, label: 'Twitter' },
+    { key: 'github', icon: Github, label: 'GitHub' },
+    { key: 'linkedin', icon: Linkedin, label: 'LinkedIn' }
+  ]
+
   return (
       <div className="mb-8">
-          <Card className="overflow-hidden" style={{ '--accent-color': accentColor } as React.CSSProperties}>
-            {/* Banner */}
-            <div 
-              className={`h-32 w-full ${bannerClass}`}
-              style={getBannerStyle()}
-            />
-            
-            <CardHeader className="-mt-8 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-3xl border-4 border-white shadow-lg">
-                  {userData?.profileEmoji || <UserIcon className="h-6 w-6 text-muted-foreground" />}
-                </div>
-                <div className="flex-1">
-                  <h1 className="text-lg font-semibold capitalize flex items-center gap-2">
-                    {userData?.username}
-                  </h1>
-                  {joinDate && (
-                    <p className="text-sm text-muted-foreground flex items-center gap-1">
-                      <CalendarIcon className="h-4 w-4" />
-                      Joined {joinDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm" style={{ color: accentColor }}>
-                    minispace.dev/{userData?.username}
-                  </span>
-                </div>
+        {/* Header Text */}
+        {userData.headerText && (
+          <div className="mb-6 p-4 rounded-lg bg-muted/30 border-l-4" style={{ borderLeftColor: accentColor }}>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{userData.headerText}</p>
+          </div>
+        )}
+
+        <Card className={`overflow-hidden ${themeClasses.card}`} style={{ '--accent-color': accentColor } as React.CSSProperties}>
+          {/* Banner */}
+          <div 
+            className={`h-32 w-full ${bannerClass}`}
+            style={getBannerStyle()}
+          />
+          
+          <CardHeader className={`-mt-8 relative z-10 ${themeClasses.header}`}>
+            <div className="flex items-center gap-4">
+              <div className={`h-16 w-16 rounded-full bg-muted flex items-center justify-center text-3xl ${themeClasses.avatar}`} style={{ backgroundColor: accentColor }}>
+                {userData?.profileEmoji ? (
+                  <span className="text-white">{userData.profileEmoji}</span>
+                ) : (
+                  <UserIcon className="h-8 w-8 text-white" />
+                )}
               </div>
-            </CardHeader>
-            {userData?.bio && (
-              <CardContent>
-                <p className="text-muted-foreground whitespace-pre-wrap">{userData.bio}</p>
-              </CardContent>
-            )}
-          </Card>
-        </div>
+              <div className="flex-1">
+                <h1 className="text-lg font-semibold capitalize flex items-center gap-2">
+                  {userData?.username}
+                </h1>
+                {showJoinDate && joinDate && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <CalendarIcon className="h-4 w-4" />
+                    Joined {joinDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm" style={{ color: accentColor }}>
+                  minispace.dev/{userData?.username}
+                </span>
+              </div>
+            </div>
+          </CardHeader>
+          
+          {userData?.bio && (
+            <CardContent>
+              <p className="text-muted-foreground whitespace-pre-wrap mb-4">{userData.bio}</p>
+              
+              {/* Social Links */}
+              {userData.socialLinks && Object.values(userData.socialLinks).some(link => link) && (
+                <div className="flex flex-wrap gap-3 pt-4 border-t">
+                  {socialLinksConfig.map(({ key, icon: Icon, label }) => {
+                    const link = userData.socialLinks?.[key as keyof typeof userData.socialLinks]
+                    if (!link) return null
+                    
+                    return (
+                      <Link
+                        key={key}
+                        href={link.startsWith('http') ? link : `https://${link}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-3 py-1 rounded-full border hover:shadow-sm transition-all text-sm"
+                        style={{ 
+                          borderColor: `${accentColor}40`,
+                          color: accentColor
+                        }}
+                        title={`${label}: ${link}`}
+                      >
+                        <Icon className="h-3 w-3" />
+                        <span>{label}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              )}
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Footer Text */}
+        {userData.footerText && (
+          <div className="mt-6 p-4 rounded-lg bg-muted/30 border-l-4" style={{ borderLeftColor: accentColor }}>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{userData.footerText}</p>
+          </div>
+        )}
+      </div>
   )
 }
