@@ -31,7 +31,6 @@ interface UserData {
     linkedin?: string
   }
   headerText?: string
-  footerText?: string
   showJoinDate?: boolean
   profileLayout?: string
 }
@@ -269,6 +268,15 @@ export default function PublicProfilePage() {
       )}
       
       <div className="p-6">
+        {/* Header Text - Custom site title */}
+        {userData.headerText && (
+          <div className=" mb-8">
+            <h1 className="text-xl font-semibold" style={{ color: userData.accentColor || '#3b82f6' }}>
+              {userData.headerText}
+            </h1>
+          </div>
+        )}
+
         <div className={getLayoutClasses()}>
           {parseTokens({
             content: layoutContent,
@@ -280,6 +288,7 @@ export default function PublicProfilePage() {
             selectedTag
           })}
         </div>
+
       </div>
     </div>
   )

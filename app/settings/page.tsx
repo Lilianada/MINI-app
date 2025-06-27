@@ -40,7 +40,6 @@ export default function SettingsPage() {
     linkedin: ""
   })
   const [headerText, setHeaderText] = useState("")
-  const [footerText, setFooterText] = useState("")
   const [showJoinDate, setShowJoinDate] = useState(true)
   const [profileLayout, setProfileLayout] = useState("default") // default, sidebar, centered
   const [currentPassword, setCurrentPassword] = useState("")
@@ -82,7 +81,6 @@ export default function SettingsPage() {
         linkedin: userData.socialLinks?.linkedin || ""
       })
       setHeaderText(userData.headerText || "")
-      setFooterText(userData.footerText || "")
       setShowJoinDate(userData.showJoinDate !== false) // default to true
       setProfileLayout(userData.profileLayout || "default")
     }
@@ -130,7 +128,6 @@ export default function SettingsPage() {
         customCSS,
         socialLinks,
         headerText,
-        footerText,
         showJoinDate,
         profileLayout,
       })
@@ -530,7 +527,7 @@ export default function SettingsPage() {
               {/* Header and Footer Text */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="headerText">Header Text</Label>
+                  <Label htmlFor="headerText">Site Title</Label>
                   <Input
                     id="headerText"
                     value={headerText}
@@ -538,18 +535,7 @@ export default function SettingsPage() {
                     placeholder="Welcome to my space!"
                     disabled={!isEditing || isSubmitting}
                   />
-                  <p className="text-xs text-muted-foreground">Displayed at the top of your profile</p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="footerText">Footer Text</Label>
-                  <Input
-                    id="footerText"
-                    value={footerText}
-                    onChange={(e) => setFooterText(e.target.value)}
-                    placeholder="Thanks for visiting!"
-                    disabled={!isEditing || isSubmitting}
-                  />
-                  <p className="text-xs text-muted-foreground">Displayed at the bottom of your profile</p>
+                  <p className="text-xs text-muted-foreground">Custom title displayed at the top of your profile page</p>
                 </div>
               </div>
 

@@ -41,7 +41,6 @@ interface UserData {
     linkedin?: string
   }
   headerText?: string
-  footerText?: string
   showJoinDate?: boolean
   profileLayout?: string
 }

@@ -101,15 +101,7 @@ export function ProfileCard({ userData }: ProfileCardProps) {
   ]
 
   return (
-      <div className="mb-8">
-        {/* Header Text */}
-        {userData.headerText && (
-          <div className="mb-6 p-4 rounded-lg bg-muted/30 border-l-4" style={{ borderLeftColor: accentColor }}>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{userData.headerText}</p>
-          </div>
-        )}
-
-        <Card className={`overflow-hidden ${themeClasses.card}`} style={{ '--accent-color': accentColor } as React.CSSProperties}>
+        <Card className={`overflow-hidden mb-8 ${themeClasses.card}`} style={{ '--accent-color': accentColor } as React.CSSProperties}>
           {/* Banner */}
           <div 
             className={`h-32 w-full ${bannerClass}`}
@@ -151,7 +143,7 @@ export function ProfileCard({ userData }: ProfileCardProps) {
               
               {/* Social Links */}
               {userData.socialLinks && Object.values(userData.socialLinks).some(link => link) && (
-                <div className="flex flex-wrap gap-3 pt-4 border-t">
+                <div className="flex flex-wrap gap-3 pt-4">
                   {socialLinksConfig.map(({ key, icon: Icon, label }) => {
                     const link = userData.socialLinks?.[key as keyof typeof userData.socialLinks]
                     if (!link) return null
@@ -179,13 +171,5 @@ export function ProfileCard({ userData }: ProfileCardProps) {
             </CardContent>
           )}
         </Card>
-
-        {/* Footer Text */}
-        {userData.footerText && (
-          <div className="mt-6 p-4 rounded-lg bg-muted/30 border-l-4" style={{ borderLeftColor: accentColor }}>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{userData.footerText}</p>
-          </div>
-        )}
-      </div>
   )
 }
