@@ -5,23 +5,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "./ui/button"
-import { PenLine, User, Settings, LogOut, Loader2, Menu, Minimize, ChevronDown, Text, AlertCircle } from "lucide-react"
+import { PenLine, User, Settings, LogOut, Loader2, Menu, Text, AlertCircle, Minimize } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { IssueDialog } from "./issue-dialog"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "./ui/dropdown-menu"
-import { ModeToggle } from "./mode-toggle"
 
 export function Navbar() {
   const { user, logout, loggingOut } = useAuth()
   const pathname = usePathname()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isDesktopOpen, setIsDesktopOpen] = useState(false)
 
   // Don't show navbar on landing page
   if (pathname === "/") return null
@@ -46,10 +37,13 @@ export function Navbar() {
             <SheetContent side="left" className="p-0 w-64 flex flex-col justify-between">
               <div className="flex flex-col gap-6 p-4">
                 <SheetTitle>
-                  <Link href="/discover" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
-                    MINISPACE
+                  <Link href="/" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
+                    
                   </Link>
                 </SheetTitle>
+                <Link href="/about" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                  <Minimize className="w-4 h-4" /> About
+                </Link>
                 <Link href="/discover" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <Text className="w-4 h-4" /> Discover
                 </Link>

@@ -15,12 +15,12 @@ export default function Home() {
   ]
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-[calc(100vh_-_73px)]">
       {/* Navbar */}
-      <nav className="flex justify-between items-center p-4 ">
+      <nav className="flex justify-between items-center py-8 px-4 ">
         <div>
           <Link href="/discover" className="hover:text-blue-500 transition-colors text-sm">
-            Explore Spaces
+            Discover
           </Link>
         </div>
         <div className="flex gap-4">
@@ -48,11 +48,11 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="p-4 flex justify-between">
+      {/* <footer className="p-4 flex justify-between">
         <span className="text-sm text-muted-foreground">Your quiet corner of the internet</span>
         <span className="text-sm text-muted-foreground">Built for simplicity.</span>
       </footer>
-     
+      */}
     </div>
   )
 }
