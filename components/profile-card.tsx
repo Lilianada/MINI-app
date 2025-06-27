@@ -71,20 +71,20 @@ export function ProfileCard({ userData }: ProfileCardProps) {
     switch (userData.profileTheme) {
       case 'modern':
         return {
-          card: 'shadow-xl border-0 bg-gradient-to-br from-background to-background/50',
-          header: 'bg-gradient-to-r from-background/80 to-background/40 backdrop-blur-sm',
-          avatar: 'ring-4 ring-white/50 shadow-2xl'
+          card: 'shadow-lg border-0 bg-gradient-to-br from-background via-background to-muted/20',
+          header: 'bg-background/95 backdrop-blur-sm',
+          avatar: 'ring-2 ring-white shadow-lg'
         }
       case 'creative':
         return {
-          card: 'shadow-2xl border-2 transform hover:scale-[1.02] transition-transform duration-300',
-          header: 'bg-gradient-to-r from-primary/5 to-secondary/5',
-          avatar: 'ring-4 shadow-xl transform rotate-3 hover:rotate-0 transition-transform duration-300'
+          card: 'shadow-lg border-2 border-muted-foreground/10',
+          header: 'bg-background',
+          avatar: 'border-4 border-white shadow-lg'
         }
       default: // minimal
         return {
-          card: 'shadow-sm border',
-          header: '',
+          card: 'shadow-sm border border-border',
+          header: 'bg-background',
           avatar: 'border-4 border-white shadow-lg'
         }
     }

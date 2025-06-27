@@ -502,15 +502,16 @@ export default function SettingsPage() {
                   disabled={!isEditing || isSubmitting}
                   className="w-full px-3 py-2 border border-input rounded-md bg-background"
                 >
-                  <option value="minimal">Minimal - Clean and simple</option>
-                  <option value="modern">Modern - Sleek with shadows</option>
-                  <option value="creative">Creative - Artistic and bold</option>
+                  <option value="minimal">Minimal - Clean and simple design</option>
+                  <option value="modern">Modern - Subtle gradients and enhanced shadows</option>
+                  <option value="creative">Creative - Unique styling with decorative borders</option>
                 </select>
+                <p className="text-xs text-muted-foreground">Choose the visual style for your profile card</p>
               </div>
 
               {/* Profile Layout */}
               <div className="space-y-2">
-                <Label htmlFor="profileLayout">Layout Style</Label>
+                <Label htmlFor="profileLayout">Page Layout</Label>
                 <select
                   id="profileLayout"
                   value={profileLayout}
@@ -518,10 +519,11 @@ export default function SettingsPage() {
                   disabled={!isEditing || isSubmitting}
                   className="w-full px-3 py-2 border border-input rounded-md bg-background"
                 >
-                  <option value="default">Default - Standard layout</option>
-                  <option value="sidebar">Sidebar - Profile card on the side</option>
-                  <option value="centered">Centered - Everything centered</option>
+                  <option value="default">Default - Standard responsive layout</option>
+                  <option value="sidebar">Sidebar - Profile and posts side-by-side</option>
+                  <option value="centered">Centered - Narrow, focused layout</option>
                 </select>
+                <p className="text-xs text-muted-foreground">Choose how your profile page content is arranged</p>
               </div>
 
               {/* Header and Footer Text */}

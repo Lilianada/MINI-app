@@ -252,11 +252,11 @@ export default function PublicProfilePage() {
   const getLayoutClasses = () => {
     switch (userData.profileLayout) {
       case 'sidebar':
-        return 'max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8'
+        return 'max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8'
       case 'centered':
-        return 'max-w-4xl mx-auto'
+        return 'max-w-3xl mx-auto'
       default:
-        return 'max-w-6xl mx-auto'
+        return 'max-w-5xl mx-auto'
     }
   }
 
@@ -267,11 +267,11 @@ export default function PublicProfilePage() {
         <style dangerouslySetInnerHTML={{ __html: userData.customCSS }} />
       )}
       
-      <div className="p-6">
+      <div className="p-4 lg:p-6">
         {/* Header Text - Custom site title */}
         {userData.headerText && (
-          <div className=" mb-8">
-            <h1 className="text-xl font-semibold" style={{ color: userData.accentColor || '#3b82f6' }}>
+          <div className=" mb-6 lg:mb-8">
+            <h1 className="text-lg lg:text-xl font-semibold break-words" style={{ color: userData.accentColor || '#3b82f6' }}>
               {userData.headerText}
             </h1>
           </div>
@@ -288,7 +288,6 @@ export default function PublicProfilePage() {
             selectedTag
           })}
         </div>
-
       </div>
     </div>
   )
