@@ -36,7 +36,7 @@ export default function Sidebar() {
           <AlertCircle className="w-4 h-4" />
         </Link>
       </SidebarTooltip>
-      <ModeToggle />
+      
       {user && (
         <SidebarTooltip label="Logout">
           <SidebarLogoutButton />

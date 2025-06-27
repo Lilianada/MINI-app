@@ -43,6 +43,11 @@ export default function PublicProfilePage() {
     const fetchUserProfile = async () => {
       try {
         if (!db) throw new Error("Firestore is not initialized")
+        if (!username) {
+          console.log("Username parameter is not available")
+          setLoading(false)
+          return
+        }
 
         // First, find the user by username (try case-insensitive)
         let usersSnapshot

@@ -22,19 +22,19 @@ export function HelpModal() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5" />
-            Welcome to MINI
+            Welcome to MINISPACE
           </DialogTitle>
           <DialogDescription>
-            A minimalist platform for reading and writing without the noise.
+            A MINISPACEmalist platform for reading and writing without the noise.
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* What is MINI */}
+          {/* What is MINISPACE */}
           <div>
-            <h3 className="text-lg font-semibold mb-3">What is MINI?</h3>
+            <h3 className="text-lg font-semibold mb-3">What is MINISPACE?</h3>
             <p className="text-muted-foreground leading-relaxed">
-              MINI is a distraction-free platform designed for writers and readers who value simplicity. 
+              MINISPACE is a distraction-free platform designed for writers and readers who value simplicity. 
               Focus on what matters most - your words and ideas - without ads, algorithms, or clutter.
             </p>
           </div>

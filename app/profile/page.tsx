@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
 import { HelpModal } from "@/components/help-modal"
+import { ConfirmationDialog } from "@/components/confirmation-dialog"
 
 interface Article {
   id: string
@@ -41,15 +42,24 @@ export default function ProfilePage() {
       return;
     }
 
+    // Don't fetch articles until user is loaded and authenticated
+    if (loading || !user) {
+      return;
+    }
+
     const fetchUserArticles = async () => {
       try {
         if (!db) throw new Error("Firestore is not initialized")
+        if (!user?.uid) {
+          console.log("User UID is not available yet")
+          return
+        }
 
         // First try to fetch articles with the index
         try {
           const articlesQuery = query(
             collection(db, "Articles"),
-            where("authorId", "==", user?.uid),
+            where("authorId", "==", user.uid),
             orderBy("createdAt", "desc"),
           )
 
@@ -72,7 +82,7 @@ export default function ProfilePage() {
             console.log("Create Firestore index at:", indexUrl)
 
             // Try to fetch without ordering as a fallback
-            const fallbackQuery = query(collection(db, "Articles"), where("authorId", "==", user?.uid))
+            const fallbackQuery = query(collection(db, "Articles"), where("authorId", "==", user.uid))
 
             const fallbackSnapshot = await getDocs(fallbackQuery)
 
@@ -102,7 +112,7 @@ export default function ProfilePage() {
     }
 
     fetchUserArticles()
-  }, [user, router])
+  }, [user, router, loading]) // Added loading dependency
 
   if (!user || loading) {
     return (
@@ -165,16 +175,10 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4  py-8 sm:px-8 min-h-[calc(100vh-8rem)]">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold">My Profile</h1>
+            <h1 className="text-xl font-semibold">My Profile</h1>
           </div>
           <div className="flex gap-2">
              <HelpModal />
-            <Link href={`/${userData?.username}`}>
-              <Button variant="outline" size="sm">
-                <Globe className="w-4 h-4" />
-                Public Profile
-              </Button>
-            </Link>
           </div>
         </div>
 
@@ -224,7 +228,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Public Profile</p>
-                    <Link href={`/${userData?.username}`} className="text-sm font-medium text-blue-600 hover:underline">
+                    <Link href={`/${userData?.username}`} className="text-sm font-medium text-blue-600 hover:underline lowercase">
                       minispace.dev/{userData?.username}
                     </Link>
                   </div>
@@ -342,48 +346,45 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+      
       {/* Confirm Delete Dialog */}
-      {showConfirm && articleToDelete && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-6 max-w-sm w-full">
-            <h2 className="text-lg font-semibold mb-4">Delete Article</h2>
-            <p className="mb-4">Are you sure you want to delete <span className="font-bold">{articleToDelete.title}</span>? This action cannot be undone.</p>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => { setShowConfirm(false); setArticleToDelete(null); }} disabled={deletingId !== null}>Cancel</Button>
-              <Button
-                variant="destructive"
-                onClick={async () => {
-                  if (!articleToDelete) return;
-                  setDeletingId(articleToDelete.id);
-                  try {
-                    await deleteDoc(doc(db, "Articles", articleToDelete.id));
-                    setArticles((prev) => prev.filter((a) => a.id !== articleToDelete.id));
-                    toast({
-                      title: "Deleted",
-                      description: "Article deleted successfully.",
-                      variant: "destructive",
-                    });
-                    setShowConfirm(false);
-                    setArticleToDelete(null);
-                  } catch (error) {
-                    toast({
-                      title: "Error",
-                      description: "Failed to delete article.",
-                      variant: "destructive",
-                    });
-                  } finally {
-                    setDeletingId(null);
-                  }
-                }}
-                disabled={deletingId !== null}
-              >
-                {deletingId !== null ? "Deleting..." : "Delete"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-      <Footer />
+      <ConfirmationDialog
+        isOpen={showConfirm}
+        onClose={() => {
+          setShowConfirm(false)
+          setArticleToDelete(null)
+        }}
+        onConfirm={async () => {
+          if (!articleToDelete) return
+          setDeletingId(articleToDelete.id)
+          try {
+            await deleteDoc(doc(db, "Articles", articleToDelete.id))
+            setArticles((prev) => prev.filter((a) => a.id !== articleToDelete.id))
+            toast({
+              title: "Deleted",
+              description: "Article deleted successfully.",
+              variant: "destructive",
+            })
+            setShowConfirm(false)
+            setArticleToDelete(null)
+          } catch (error) {
+            toast({
+              title: "Error",
+              description: "Failed to delete article.",
+              variant: "destructive",
+            })
+          } finally {
+            setDeletingId(null)
+          }
+        }}
+        title="Delete Article"
+        message={`Are you sure you want to delete <span class="font-bold">${articleToDelete?.title}</span>? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={deletingId !== null}
+        loadingText="Deleting..."
+        variant="destructive"
+      />
     </>
   )
 }

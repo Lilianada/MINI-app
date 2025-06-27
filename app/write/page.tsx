@@ -151,16 +151,8 @@ export default function WritePage() {
     <>
       <Navbar />
       <div className="container mx-auto py-8 sm:px-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => router.back()}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-bold">Write an Article</h1>
+        <div className="flex items-center mb-6">
+          <h1 className="text-xl font-semibold">Start writing...</h1>
         </div>
 
         <div className="space-y-6">
@@ -173,7 +165,7 @@ export default function WritePage() {
               placeholder="Enter article title"
               disabled={isSubmitting}
             />
-            {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
+            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
           </div>
 
           <div className="space-y-2">
@@ -189,9 +181,9 @@ export default function WritePage() {
               onChange={handleExcerptChange}
               placeholder="Write a short excerpt (appears in article listings)"
               disabled={isSubmitting}
-              className="resize-none h-20"
+              className="resize-none h-12"
             />
-            {errors.excerpt && <p className="text-sm text-red-500">{errors.excerpt}</p>}
+            {errors.excerpt && <p className="text-xs text-red-500">{errors.excerpt}</p>}
           </div>
 
           <div className="space-y-2">
@@ -208,7 +200,7 @@ export default function WritePage() {
                 disabled={isSubmitting}
                 className="resize-none h-64 border-0 focus-visible:ring-0 p-0"
               />
-              {errors.body && <p className="text-sm text-red-500">{errors.body}</p>}
+              {errors.body && <p className="text-xs text-red-500">{errors.body}</p>}
             </div>
           </div>
 

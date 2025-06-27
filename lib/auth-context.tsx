@@ -63,6 +63,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast()
   const router = useRouter()
 
+  // Helper functions for localStorage
+  const saveUserToStorage = (user: User, userData: UserData) => {
+    try {
+      localStorage.setItem('minispace_user', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        userData: userData
+      }))
+    } catch (error) {
+      console.error('Error saving user to localStorage:', error)
+    }
+  }
+
+  const loadUserFromStorage = () => {
+    try {
+      const stored = localStorage.getItem('minispace_user')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        return parsed
+      }
+    } catch (error) {
+      console.error('Error loading user from localStorage:', error)
+      localStorage.removeItem('minispace_user')
+    }
+    return null
+  }
+
+  const clearUserFromStorage = () => {
+    try {
+      localStorage.removeItem('minispace_user')
+    } catch (error) {
+      console.error('Error clearing user from localStorage:', error)
+    }
+  }
+
+  // Initialize user from localStorage on mount
+  useEffect(() => {
+    const storedUser = loadUserFromStorage()
+    if (storedUser) {
+      // Create a mock user object with essential properties
+      const mockUser = {
+        uid: storedUser.uid,
+        email: storedUser.email,
+      } as User
+      
+      setUser(mockUser)
+      setUserData(storedUser.userData)
+    }
+  }, [])
+
   // Check if Firebase is initialized
   useEffect(() => {
     const checkFirebase = () => {
@@ -119,25 +169,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const userData = userDoc.data() as UserData
               setUserData(userData)
               
+              // Save to localStorage
+              saveUserToStorage(user, userData)
 
-              // Show welcome message based on time of day
-              const hour = new Date().getHours()
-              let greeting = "Hello"
+              // Show welcome message based on time of day (only if not already shown)
+              const lastWelcome = localStorage.getItem('minispace_last_welcome')
+              const today = new Date().toDateString()
+              
+              if (lastWelcome !== today) {
+                const hour = new Date().getHours()
+                let greeting = "Hello"
 
-              if (hour < 12) greeting = "Good morning"
-              else if (hour < 18) greeting = "Good afternoon"
-              else greeting = "Good evening"
+                if (hour < 12) greeting = "Good morning"
+                else if (hour < 18) greeting = "Good afternoon"
+                else greeting = "Good evening"
 
-              toast({
-                title: `${greeting}, ${userData.username}!`,
-                description:
-                  hour < 12
-                    ? "Start your day with a great read."
-                    : hour < 18
-                      ? "Take a break with some interesting articles."
-                      : "Unwind with some reading or writing.",
-                duration: 5000,
-              })
+                toast({
+                  title: `${greeting}, ${userData.username}!`,
+                  description:
+                    hour < 12
+                      ? "Start your day with a great read."
+                      : hour < 18
+                        ? "Take a break with some interesting articles."
+                        : "Unwind with some reading or writing.",
+                  duration: 5000,
+                })
+                
+                localStorage.setItem('minispace_last_welcome', today)
+              }
             } else {
               console.warn("User document does not exist for authenticated user")
             }
@@ -146,6 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } else {
           setUserData(null)
+          clearUserFromStorage()
         }
 
         setLoading(false)
@@ -186,11 +246,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
 
       // Save user data to Firestore
-      await setDoc(doc(db, "Users", user.uid), {
+      const userData = {
         username,
         email,
         createdAt: new Date(),
-      })
+      }
+      
+      await setDoc(doc(db, "Users", user.uid), userData)
+
+      // Immediately save to localStorage for instant availability
+      saveUserToStorage(user, userData as UserData)
+      setUser(user)
+      setUserData(userData as UserData)
 
       return { success: true }
     } catch (error) {
@@ -276,12 +343,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Show logout message
       toast({
         title: "Signing out...",
-        description: "Thank you for using MINI. See you soon!",
+        description: "Thank you for using MINISPACE. See you soon!",
         duration: 2000,
       })
 
       // Clear user data immediately for better UX
       setUserData(null)
+      clearUserFromStorage()
       
       // Sign out from Firebase
       await signOut(auth)

@@ -5,10 +5,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "./ui/button"
-import { PenLine, User, Settings, LogOut, Loader2, Menu, Minimize, ChevronDown, BookOpen, AlertCircle } from "lucide-react"
+import { PenLine, User, Settings, LogOut, Loader2, Menu, Minimize, ChevronDown, Text, AlertCircle } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { IssueDialog } from "./issue-dialog"
-import { ThemeToggle } from "./theme-toggle"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -29,31 +28,30 @@ export function Navbar() {
 
   return (
     <nav className="border-b p-4 sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex justify-between md:justify-center items-center">
+      <div className="mx-auto flex justify-between items-center">
         {/* Mobile: show logo only */}
         <div className="flex  items-center gap-2 ">
-          {/* <Minimize className="h-5 w-5" /> */}
-          <Link href="/" className="font-bold text-lg">
+          <Link href="/" className="font-bold text-base">
             MINISPACE
           </Link>
         </div>
         {/* Mobile Navigation */}
-        <div className="md:hidden">
+        <div className="">
           <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 flex flex-col justify-between">
               <div className="flex flex-col gap-6 p-4">
                 <SheetTitle>
-                  <Link href="/articles" className="font-bold text-lg mb-4 flex items-center gap-2 px-2 py-2">
-                    MINI
+                  <Link href="/articles" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
+                    MINISPACE
                   </Link>
                 </SheetTitle>
                 <Link href="/articles" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
-                  <BookOpen className="w-4 h-4" /> Read
+                  <Text className="w-4 h-4" /> Discover
                 </Link>
                 <Link href="/write" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <PenLine className="w-4 h-4" /> Write
@@ -73,9 +71,6 @@ export function Navbar() {
                     <AlertCircle className="w-4 h-4" /> Issues
                   </Link>
                 )}
-                <div className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2">
-                  <ThemeToggle /> Switch
-                </div>
                 </div>
                 <div className="flex flex-col gap-6 p-4">
                   <IssueDialog />

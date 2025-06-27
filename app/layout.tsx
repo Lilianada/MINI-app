@@ -63,9 +63,10 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" themes={['dark']} enableSystem={false} disableTransitionOnChange>
             <div className=" max-w-4xl mx-auto w-full flex relative">
-            {/* <Sidebar /> */}
+           
             <main className="flex-1 flex flex-col  border-x">
               {children}
+              <Footer />
               </main>
             </div>
             <LogoutOverlay />
