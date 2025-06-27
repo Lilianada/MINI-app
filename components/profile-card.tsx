@@ -101,16 +101,16 @@ export function ProfileCard({ userData }: ProfileCardProps) {
   ]
 
   return (
-        <Card className={`overflow-hidden mb-8 ${themeClasses.card}`} style={{ '--accent-color': accentColor } as React.CSSProperties}>
+        <Card className={`overflow-hidden mb-8 profile-card ${themeClasses.card}`} style={{ '--accent-color': accentColor } as React.CSSProperties}>
           {/* Banner */}
           <div 
-            className={`h-32 w-full ${bannerClass}`}
+            className={`h-32 w-full profile-banner ${bannerClass}`}
             style={getBannerStyle()}
           />
           
           <CardHeader className={`-mt-8 relative z-10 ${themeClasses.header}`}>
             <div className="flex items-center gap-4">
-              <div className={`h-16 w-16 rounded-full bg-muted flex items-center justify-center text-3xl ${themeClasses.avatar}`} style={{ backgroundColor: accentColor }}>
+              <div className={`h-16 w-16 rounded-full bg-muted flex items-center justify-center text-3xl profile-avatar ${themeClasses.avatar}`} style={{ backgroundColor: accentColor }}>
                 {userData?.profileEmoji ? (
                   <span className="text-white">{userData.profileEmoji}</span>
                 ) : (
@@ -143,7 +143,7 @@ export function ProfileCard({ userData }: ProfileCardProps) {
               
               {/* Social Links */}
               {userData.socialLinks && Object.values(userData.socialLinks).some(link => link) && (
-                <div className="flex flex-wrap gap-3 pt-4">
+                <div className="flex flex-wrap gap-3 social-links">
                   {socialLinksConfig.map(({ key, icon: Icon, label }) => {
                     const link = userData.socialLinks?.[key as keyof typeof userData.socialLinks]
                     if (!link) return null

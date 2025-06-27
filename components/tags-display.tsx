@@ -51,7 +51,7 @@ export function TagsDisplay({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 tags-container">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-foreground">
@@ -69,11 +69,11 @@ export function TagsDisplay({
       </div>
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 tags-list">
         {/* All Tags button */}
         <button
           onClick={() => onTagClick?.(null)}
-          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors tag-item tag-all ${
             !selectedTag 
               ? 'text-white' 
               : 'hover:opacity-80'
@@ -97,7 +97,9 @@ export function TagsDisplay({
             <button
               key={tag}
               onClick={() => onTagClick?.(tag)}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors hover:opacity-80"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors hover:opacity-80 tag-item"
+              data-selected={isSelected}
+              data-tag={tag}
               style={{
                 backgroundColor: isSelected ? accentColor : `${accentColor}20`,
                 color: isSelected ? 'white' : accentColor

@@ -54,10 +54,10 @@ export function PostsDisplay({
   }
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-0 posts-container">
      
       {/* Articles list */}
-      <div className="space-y-0">
+      <div className="space-y-0 posts-list">
         {articles.map((article) => (
           <PostItem
             key={article.id}
@@ -105,7 +105,9 @@ function PostItem({
   const isDeleting = deletingId === article.id
 
   return (
-    <div className="py-2 hover:bg-muted/30 transition-colors group">
+    <div className="py-2 hover:bg-muted/30 transition-colors group article-item"
+      data-published={article.published}
+    >
       <div className="flex items-center gap-3">
         {/* Blue bullet point */}
         <div 

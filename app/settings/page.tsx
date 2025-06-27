@@ -586,25 +586,51 @@ export default function SettingsPage() {
                   id="customCSS"
                   value={customCSS}
                   onChange={(e) => setCustomCSS(e.target.value)}
-                  placeholder="/* Add your custom CSS here */
-.my-profile {
-  background: linear-gradient(45deg, #your-color);
+                  placeholder="/* Style your profile with custom CSS */
+
+/* Change profile card style */
+.profile-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
 }
 
-/* Style your articles */
+/* Animate articles on hover */
 .article-item:hover {
-  transform: translateX(5px);
+  transform: translateX(10px);
+  transition: all 0.3s ease;
+}
+
+/* Style tags */
+.tag-item {
+  border-radius: 15px;
+  font-weight: 600;
+}
+
+/* Custom banner overlay */
+.profile-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
 }"
-                  rows={8}
+                  rows={12}
                   disabled={!isEditing || isSubmitting}
                   className="font-mono text-sm"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Advanced: Add custom CSS to style your profile. Use classes like 
-                  <code className="bg-muted px-1 rounded mx-1">.my-profile</code>,
-                  <code className="bg-muted px-1 rounded mx-1">.article-item</code>,
-                  <code className="bg-muted px-1 rounded mx-1">.tag-item</code>
-                </p>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>Style your profile with custom CSS. Available classes:</p>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    <code className="bg-muted px-2 py-1 rounded">.profile-card</code>
+                    <code className="bg-muted px-2 py-1 rounded">.profile-banner</code>
+                    <code className="bg-muted px-2 py-1 rounded">.profile-avatar</code>
+                    <code className="bg-muted px-2 py-1 rounded">.social-links</code>
+                    <code className="bg-muted px-2 py-1 rounded">.posts-container</code>
+                    <code className="bg-muted px-2 py-1 rounded">.article-item</code>
+                    <code className="bg-muted px-2 py-1 rounded">.tags-container</code>
+                    <code className="bg-muted px-2 py-1 rounded">.tag-item</code>
+                  </div>
+                  <p className="mt-2">Use data attributes like <code className="bg-muted px-1 rounded">[data-published="true"]</code> for conditional styling</p>
+                </div>
               </div>
 
               {/* Display Options */}
