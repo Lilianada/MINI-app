@@ -67,15 +67,24 @@ export default function PublicProfilePage() {
 
         console.log("Fetching profile for username:", username)
 
-        // Query for user by username
-        const usersQuery = query(collection(db, "Users"), where("username", "==", username))
-        const usersSnapshot = await getDocs(usersQuery)
+        // Normalize username to lowercase for lookup
+        const normalizedUsername = username.toLowerCase()
 
+        // Query for user by username (case-insensitive)
+        let usersQuery = query(collection(db, "Users"), where("username", "==", normalizedUsername))
+        let usersSnapshot = await getDocs(usersQuery)
+
+        // If not found with lowercase, try original case for backward compatibility
         if (usersSnapshot.empty) {
-          console.log("No user found with username:", username)
-          setUserNotFound(true)
-          setLoading(false)
-          return
+          usersQuery = query(collection(db, "Users"), where("username", "==", username))
+          usersSnapshot = await getDocs(usersQuery)
+          
+          if (usersSnapshot.empty) {
+            console.log("No user found with username:", username)
+            setUserNotFound(true)
+            setLoading(false)
+            return
+          }
         }
 
         // Get user data
@@ -168,18 +177,8 @@ export default function PublicProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6">
-        <div className="max-w-2xl space-y-8">
-          <Card className="p-6">
-            <div className="flex flex-col space-y-4">
-              <Skeleton className="h-20 w-20 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-4 w-40" />
-              </div>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          </Card>
+        <div className="space-y-8">
+         
           <div>
             <Skeleton className="h-6 w-48 mb-4" />
             <div className="space-y-4">
@@ -207,8 +206,7 @@ export default function PublicProfilePage() {
   if (userNotFound) {
     return (
       <div className="min-h-screen bg-background p-6">
-        <div className="max-w-2xl py-16">
-          <UserIcon className="h-16 w-16 text-muted-foreground mb-4" />
+        <div className="max-w-2xl py-16 mx-auto text-center">
           <h1 className="text-2xl font-bold mb-2">User Not Found</h1>
           <p className="text-muted-foreground mb-6">
             The user {username} doesn't exist or may have changed their username.

@@ -39,7 +39,6 @@ export function TagsDisplay({
       .sort(([, a], [, b]) => b - a) // Sort by count descending
   }, [articles])
 
-  const totalCount = articles.length
   const displayedTags = showAllTags ? tagCounts : tagCounts.slice(0, 12)
   const hasMoreTags = tagCounts.length > 12
 
@@ -86,13 +85,9 @@ export function TagsDisplay({
         >
           <span>All Tags</span>
           <span 
-            className="px-1.5 py-0.5 rounded-full text-[10px] font-medium"
-            style={{
-              backgroundColor: !selectedTag ? 'rgba(255,255,255,0.3)' : `${accentColor}30`,
-              color: !selectedTag ? 'white' : accentColor
-            }}
+            className="text-[10px] font-medium"
           >
-            {totalCount}
+           ({tagCounts.length})
           </span>
         </button>
 

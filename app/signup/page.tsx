@@ -40,9 +40,10 @@ export default function SignupPage() {
       newErrors.username = "Username must be at least 3 characters"
       isValid = false
     } else if (db) {
-      // Check if username is unique
+      // Check if username is unique (case-insensitive)
       try {
-        const usernameQuery = query(collection(db, "Users"), where("username", "==", username))
+        const normalizedUsername = username.toLowerCase()
+        const usernameQuery = query(collection(db, "Users"), where("username", "==", normalizedUsername))
         const usernameSnapshot = await getDocs(usernameQuery)
         if (!usernameSnapshot.empty) {
           newErrors.username = "This username is already taken"
@@ -110,7 +111,7 @@ export default function SignupPage() {
         return
       }
 
-      const result = await signup(email, password, username)
+      const result = await signup(email, password, username.toLowerCase())
 
       if (result.success) {
         router.push("/profile")
@@ -160,11 +161,12 @@ export default function SignupPage() {
                   id="username"
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                  placeholder="Enter your username (lowercase only)"
                   disabled={isLoading || !isFirebaseInitialized}
                 />
                 {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
+                <p className="text-xs text-muted-foreground">Usernames are automatically converted to lowercase</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

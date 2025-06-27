@@ -269,7 +269,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Save user data to Firestore
       const userData = {
-        username,
+        username: username.toLowerCase(), // Store usernames in lowercase
         email,
         createdAt: new Date(),
       }

@@ -83,12 +83,13 @@ export default function SettingsPage() {
 
       const { doc, updateDoc, collection, query, where, getDocs } = await import("firebase/firestore")
       
-      // Check if username has changed
-      const usernameChanged = username !== userData?.username
+      // Check if username has changed (normalize to lowercase)
+      const normalizedUsername = username.toLowerCase()
+      const usernameChanged = normalizedUsername !== userData?.username
 
       // Update Firestore document
       await updateDoc(doc(db, "Users", user.uid), {
-        username,
+        username: normalizedUsername,
         email,
         bio,
         profileEmoji,
@@ -111,7 +112,7 @@ export default function SettingsPage() {
           // Update each article with the new username
           const updatePromises = articlesSnapshot.docs.map((articleDoc: any) => {
             return updateDoc(doc(db, "Articles", articleDoc.id), {
-              authorName: username
+              authorName: normalizedUsername
             })
           })
           
@@ -301,9 +302,11 @@ export default function SettingsPage() {
                 <Input
                   id="username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase())}
                   disabled={!isEditing || isSubmitting}
+                  placeholder="username (lowercase only)"
                 />
+                <p className="text-xs text-muted-foreground">Usernames are automatically converted to lowercase</p>
               </div>
 
               <div className="space-y-2">
