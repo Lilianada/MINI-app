@@ -15,7 +15,7 @@ interface Article {
 interface TagsDisplayProps {
   articles: Article[]
   accentColor?: string
-  onTagClick?: (tag: string) => void
+  onTagClick?: (tag: string | null) => void
   selectedTag?: string | null
 }
 
@@ -25,6 +25,8 @@ export function TagsDisplay({
   onTagClick,
   selectedTag 
 }: TagsDisplayProps) {
+  const [showAllTags, setShowAllTags] = useState(false)
+  
   // Extract all unique tags from articles with their counts
   const tagCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -38,6 +40,8 @@ export function TagsDisplay({
   }, [articles])
 
   const totalCount = articles.length
+  const displayedTags = showAllTags ? tagCounts : tagCounts.slice(0, 12)
+  const hasMoreTags = tagCounts.length > 12
 
   if (tagCounts.length === 0) {
     return (
@@ -54,12 +58,13 @@ export function TagsDisplay({
         <h3 className="text-sm font-medium text-foreground">
           Tags <span className="text-muted-foreground">(click to filter)</span>
         </h3>
-        {selectedTag && (
+        {hasMoreTags && (
           <button
-            onClick={() => onTagClick?.(null as any)}
-            className="text-xs text-blue-600 hover:underline"
+            onClick={() => setShowAllTags(!showAllTags)}
+            className="text-xs hover:underline"
+            style={{ color: accentColor }}
           >
-            + View All Tags ({totalCount})
+            {showAllTags ? `- Hide Tags` : `+ View All Tags (${tagCounts.length})`}
           </button>
         )}
       </div>
@@ -67,55 +72,51 @@ export function TagsDisplay({
       {/* Tags */}
       <div className="flex flex-wrap gap-2">
         {/* All Tags button */}
-        {!selectedTag && tagCounts.length > 0 && (
-          <button
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+        <button
+          onClick={() => onTagClick?.(null)}
+          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
+            !selectedTag 
+              ? 'text-white' 
+              : 'hover:opacity-80'
+          }`}
+          style={{ 
+            backgroundColor: !selectedTag ? accentColor : `${accentColor}20`,
+            color: !selectedTag ? 'white' : accentColor
+          }}
+        >
+          <span>All Tags</span>
+          <span 
+            className="px-1.5 py-0.5 rounded-full text-[10px] font-medium"
+            style={{
+              backgroundColor: !selectedTag ? 'rgba(255,255,255,0.3)' : `${accentColor}30`,
+              color: !selectedTag ? 'white' : accentColor
+            }}
           >
-            <span>All Tags</span>
-            <span className="bg-blue-200 text-blue-800 px-1.5 py-0.5 rounded-full text-[10px] font-medium">
-              {totalCount}
-            </span>
-          </button>
-        )}
+            {totalCount}
+          </span>
+        </button>
 
-        {tagCounts.map(([tag, count]) => {
+        {displayedTags.map(([tag, count]) => {
           const isSelected = selectedTag === tag
           return (
             <button
               key={tag}
               onClick={() => onTagClick?.(tag)}
-              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors ${
-                isSelected 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs transition-colors hover:opacity-80"
+              style={{
+                backgroundColor: isSelected ? accentColor : `${accentColor}20`,
+                color: isSelected ? 'white' : accentColor
+              }}
             >
               <span>#{tag}</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${
-                isSelected 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 text-gray-600'
-              }`}>
-                {count}
+              <span 
+              >
+                ({count})
               </span>
             </button>
           )
         })}
-
-        {/* +55 more tags button if there are many tags */}
-        {tagCounts.length > 12 && (
-          <button className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-            +{tagCounts.length - 12} more tags
-          </button>
-        )}
       </div>
-
-      {/* Results indicator */}
-      {selectedTag && (
-        <p className="text-xs text-muted-foreground">
-          Showing {articles.filter(article => article.tags?.includes(selectedTag)).length} of {totalCount} writings
-        </p>
-      )}
     </div>
   )
 }

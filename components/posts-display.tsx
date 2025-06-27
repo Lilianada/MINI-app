@@ -44,7 +44,7 @@ export function PostsDisplay({
 }: PostsDisplayProps) {
   if (articles.length === 0) {
     return (
-      <div className="py-8 text-center">
+      <div className="py-8">
         <p className="text-sm text-muted-foreground">{emptyMessage}</p>
         {emptySubtext && (
           <p className="text-xs text-muted-foreground mt-1">{emptySubtext}</p>
@@ -55,13 +55,7 @@ export function PostsDisplay({
 
   return (
     <div className="space-y-0">
-      {/* Results header */}
-      <div className="pb-4 mb-4 border-b">
-        <p className="text-sm text-muted-foreground">
-          Showing {articles.length} of {articles.length} writings
-        </p>
-      </div>
-
+     
       {/* Articles list */}
       <div className="space-y-0">
         {articles.map((article) => (
@@ -111,113 +105,86 @@ function PostItem({
   const isDeleting = deletingId === article.id
 
   return (
-    <div className="py-3 hover:bg-muted/30 transition-colors group flex items-center justify-between">
-      {/* Left side - bullet and title */}
-      <div className="flex items-start gap-3 flex-1 min-w-0">
+    <div className="py-2 hover:bg-muted/30 transition-colors group">
+      <div className="flex items-center gap-3">
         {/* Blue bullet point */}
         <div 
-          className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-          style={{ backgroundColor: accentColor }}
+          className="w-2 h-2 rounded-full flex-shrink-0"
+          style={{ backgroundColor: `${accentColor}30` }}
         />
         
-        {/* Title and metadata */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <Link 
-              href={`${linkPrefix}/${article.id}`}
-              className="text-base text-foreground hover:underline font-normal"
-            >
-              {article.title}
-            </Link>
-            
-            {/* Word count and reading time (if available) */}
-            {article.excerpt && (
-              <span className="text-xs text-muted-foreground">
-                {Math.ceil(article.excerpt.split(' ').length / 200)} min
-              </span>
-            )}
-          </div>
+        {/* Content line with title, tags, dotted line, and date */}
+        <div className="flex items-center flex-1 min-w-0 gap-2">
+          {/* Title */}
+          <Link 
+            href={`${linkPrefix}/${article.id}`}
+            className="text-sm text-foreground hover:underline font-normal flex-shrink-0"
+          >
+            {article.title}
+          </Link>
           
-          {/* Show author for discover variant */}
-          {showAuthor && (
-            <div className="mt-1">
-              <Link 
-                href={`/${article.authorName}`} 
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                by {article.authorName}
-              </Link>
+          {/* Tags */}
+          {article.tags && article.tags.length > 0 && (
+            <div className="flex gap-1 flex-shrink-0">
+              {article.tags.slice(0, 2).map((tag: string) => (
+                <span 
+                  key={tag} 
+                  className="text-[10px] px-2 py-0.5 rounded-2xl text-zinc-500"
+                  style={{ backgroundColor: `${accentColor}30`, color: accentColor }}
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
           )}
-
-          {/* Tags for profile variant - shown on hover */}
-          {isProfile && article.tags && article.tags.length > 0 && (
-            <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="flex gap-1 flex-wrap">
-                {article.tags.slice(0, 3).map((tag: string) => (
-                  <span 
-                    key={tag} 
-                    className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-                {article.tags.length > 3 && (
-                  <span className="text-xs text-muted-foreground">
-                    +{article.tags.length - 3}
-                  </span>
+          
+          {/* Dotted line that fills the space */}
+          <div className="flex-1 border-b border-dashed border-border min-w-4"></div>
+          
+          {/* Date */}
+          <span className="text-xs text-muted-foreground flex-shrink-0">
+            {formatDateDDMMYYYY(article.createdAt)}
+          </span>
+          
+          {/* Profile actions - only visible on hover */}
+          {isProfile && (
+            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+              <button
+                className="p-1 hover:bg-muted rounded"
+                title={article.published ? "Unpublish" : "Publish"}
+                onClick={() => onPublishToggle?.(article.id)}
+                disabled={isUpdating}
+              >
+                {article.published ? (
+                  <Eye className="h-3 w-3 text-green-600" />
+                ) : (
+                  <EyeOff className="h-3 w-3 text-muted-foreground" />
                 )}
-              </div>
+              </button>
+              <Link href={`/edit/${article.id}`}>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                  <Edit className="h-3 w-3" />
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
+                disabled={isDeleting}
+                onClick={() => onDelete?.(article)}
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
             </div>
           )}
         </div>
-      </div>
-
-      {/* Right side - date and actions */}
-      <div className="flex items-center gap-4 flex-shrink-0">
-        {/* Date */}
-        <span className="text-sm text-muted-foreground">
-          {formatDate(article.createdAt)}
-        </span>
-
-        {/* Profile actions */}
-        {isProfile && (
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              className="p-1 hover:bg-muted rounded"
-              title={article.published ? "Unpublish" : "Publish"}
-              onClick={() => onPublishToggle?.(article.id)}
-              disabled={isUpdating}
-            >
-              {article.published ? (
-                <Eye className="h-3 w-3 text-green-600" />
-              ) : (
-                <EyeOff className="h-3 w-3 text-muted-foreground" />
-              )}
-            </button>
-            <Link href={`/edit/${article.id}`}>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <Edit className="h-3 w-3" />
-              </Button>
-            </Link>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
-              disabled={isDeleting}
-              onClick={() => onDelete?.(article)}
-            >
-              <Trash2 className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   )
 }
 
-// Helper for formatting dates
-function formatDate(dateObj: any) {
+// Helper for formatting dates in DD-MM-YYYY format
+function formatDateDDMMYYYY(dateObj: any) {
   let date: Date | null = null;
   if (typeof dateObj === "string" || typeof dateObj === "number") {
     date = new Date(dateObj);
@@ -226,7 +193,11 @@ function formatDate(dateObj: any) {
   } else if (dateObj?.toDate) {
     date = dateObj.toDate();
   }
-  return date && !isNaN(date.getTime())
-    ? date.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" })
-    : "";
+  if (date && !isNaN(date.getTime())) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+  return "";
 }

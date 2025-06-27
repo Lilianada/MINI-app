@@ -46,13 +46,6 @@ export default function Home() {
         </div>
       
       </main>
-
-      {/* Footer */}
-      {/* <footer className="p-4 flex justify-between">
-        <span className="text-sm text-muted-foreground">Your quiet corner of the internet</span>
-        <span className="text-sm text-muted-foreground">Built for simplicity.</span>
-      </footer>
-      */}
     </div>
   )
 }
