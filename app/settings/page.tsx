@@ -29,6 +29,19 @@ export default function SettingsPage() {
   const [customLayout, setCustomLayout] = useState("")
   const [bannerPreset, setBannerPreset] = useState("")
   const [accentColor, setAccentColor] = useState("")
+  // Enhanced customization options
+  const [profileTheme, setProfileTheme] = useState("minimal") // minimal, modern, creative
+  const [customCSS, setCustomCSS] = useState("")
+  const [socialLinks, setSocialLinks] = useState({
+    website: "",
+    twitter: "",
+    github: "",
+    linkedin: ""
+  })
+  const [headerText, setHeaderText] = useState("")
+  const [footerText, setFooterText] = useState("")
+  const [showJoinDate, setShowJoinDate] = useState(true)
+  const [profileLayout, setProfileLayout] = useState("default") // default, sidebar, centered
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -57,6 +70,19 @@ export default function SettingsPage() {
       setCustomLayout(userData.customLayout || `{displayProfileCard}
 
 {displayPosts}`)
+      // Load enhanced customization options
+      setProfileTheme(userData.profileTheme || "minimal")
+      setCustomCSS(userData.customCSS || "")
+      setSocialLinks({
+        website: userData.socialLinks?.website || "",
+        twitter: userData.socialLinks?.twitter || "",
+        github: userData.socialLinks?.github || "",
+        linkedin: userData.socialLinks?.linkedin || ""
+      })
+      setHeaderText(userData.headerText || "")
+      setFooterText(userData.footerText || "")
+      setShowJoinDate(userData.showJoinDate !== false) // default to true
+      setProfileLayout(userData.profileLayout || "default")
     }
   }, [user, userData, router])
 
@@ -96,6 +122,14 @@ export default function SettingsPage() {
         bannerPreset,
         accentColor,
         customLayout,
+        // Enhanced customization options
+        profileTheme,
+        customCSS,
+        socialLinks,
+        headerText,
+        footerText,
+        showJoinDate,
+        profileLayout,
       })
 
       // Update username in all past articles if it changed
@@ -449,6 +483,157 @@ export default function SettingsPage() {
                 <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
               )}
             </CardFooter>
+          </Card>
+
+          {/* Enhanced Customization Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced Customization</CardTitle>
+              <CardDescription>Add more personality to your public profile</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Profile Theme */}
+              <div className="space-y-2">
+                <Label htmlFor="profileTheme">Profile Theme</Label>
+                <select
+                  id="profileTheme"
+                  value={profileTheme}
+                  onChange={(e) => setProfileTheme(e.target.value)}
+                  disabled={!isEditing || isSubmitting}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                >
+                  <option value="minimal">Minimal - Clean and simple</option>
+                  <option value="modern">Modern - Sleek with shadows</option>
+                  <option value="creative">Creative - Artistic and bold</option>
+                </select>
+              </div>
+
+              {/* Profile Layout */}
+              <div className="space-y-2">
+                <Label htmlFor="profileLayout">Layout Style</Label>
+                <select
+                  id="profileLayout"
+                  value={profileLayout}
+                  onChange={(e) => setProfileLayout(e.target.value)}
+                  disabled={!isEditing || isSubmitting}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                >
+                  <option value="default">Default - Standard layout</option>
+                  <option value="sidebar">Sidebar - Profile card on the side</option>
+                  <option value="centered">Centered - Everything centered</option>
+                </select>
+              </div>
+
+              {/* Header and Footer Text */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="headerText">Header Text</Label>
+                  <Input
+                    id="headerText"
+                    value={headerText}
+                    onChange={(e) => setHeaderText(e.target.value)}
+                    placeholder="Welcome to my space!"
+                    disabled={!isEditing || isSubmitting}
+                  />
+                  <p className="text-xs text-muted-foreground">Displayed at the top of your profile</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="footerText">Footer Text</Label>
+                  <Input
+                    id="footerText"
+                    value={footerText}
+                    onChange={(e) => setFooterText(e.target.value)}
+                    placeholder="Thanks for visiting!"
+                    disabled={!isEditing || isSubmitting}
+                  />
+                  <p className="text-xs text-muted-foreground">Displayed at the bottom of your profile</p>
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div className="space-y-3">
+                <Label>Social Links</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Input
+                      placeholder="Website URL"
+                      value={socialLinks.website}
+                      onChange={(e) => setSocialLinks({...socialLinks, website: e.target.value})}
+                      disabled={!isEditing || isSubmitting}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Input
+                      placeholder="Twitter/X username"
+                      value={socialLinks.twitter}
+                      onChange={(e) => setSocialLinks({...socialLinks, twitter: e.target.value})}
+                      disabled={!isEditing || isSubmitting}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Input
+                      placeholder="GitHub username"
+                      value={socialLinks.github}
+                      onChange={(e) => setSocialLinks({...socialLinks, github: e.target.value})}
+                      disabled={!isEditing || isSubmitting}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Input
+                      placeholder="LinkedIn username"
+                      value={socialLinks.linkedin}
+                      onChange={(e) => setSocialLinks({...socialLinks, linkedin: e.target.value})}
+                      disabled={!isEditing || isSubmitting}
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">Add links to your social profiles</p>
+              </div>
+
+              {/* Custom CSS */}
+              <div className="space-y-2">
+                <Label htmlFor="customCSS">Custom CSS</Label>
+                <Textarea
+                  id="customCSS"
+                  value={customCSS}
+                  onChange={(e) => setCustomCSS(e.target.value)}
+                  placeholder="/* Add your custom CSS here */
+.my-profile {
+  background: linear-gradient(45deg, #your-color);
+}
+
+/* Style your articles */
+.article-item:hover {
+  transform: translateX(5px);
+}"
+                  rows={8}
+                  disabled={!isEditing || isSubmitting}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Advanced: Add custom CSS to style your profile. Use classes like 
+                  <code className="bg-muted px-1 rounded mx-1">.my-profile</code>,
+                  <code className="bg-muted px-1 rounded mx-1">.article-item</code>,
+                  <code className="bg-muted px-1 rounded mx-1">.tag-item</code>
+                </p>
+              </div>
+
+              {/* Display Options */}
+              <div className="space-y-3">
+                <Label>Display Options</Label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="showJoinDate"
+                    checked={showJoinDate}
+                    onChange={(e) => setShowJoinDate(e.target.checked)}
+                    disabled={!isEditing || isSubmitting}
+                    className="rounded"
+                  />
+                  <Label htmlFor="showJoinDate" className="text-sm">Show join date on profile</Label>
+                </div>
+              </div>
+            </CardContent>
           </Card>
 
           <Card>

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "./ui/button"
-import { PenLine, User, Settings, LogOut, Loader2, Menu, Text, AlertCircle, Minimize } from "lucide-react"
+import { PenLine, User, Settings, LogOut, Loader2, Menu, Text, AlertCircle, Minimize, Users } from "lucide-react"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { IssueDialog } from "./issue-dialog"
 
@@ -46,6 +46,9 @@ export function Navbar() {
                 </Link>
                 <Link href="/discover" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <Text className="w-4 h-4" /> Discover
+                </Link>
+                <Link href="/users" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                  <Users className="w-4 h-4" /> Community
                 </Link>
                 <Link href="/write" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <PenLine className="w-4 h-4" /> Write

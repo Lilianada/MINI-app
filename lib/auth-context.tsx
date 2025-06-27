@@ -31,6 +31,19 @@ interface UserData {
   bannerPreset?: string
   accentColor?: string
   createdAt?: any
+  // Enhanced customization options
+  profileTheme?: string
+  customCSS?: string
+  socialLinks?: {
+    website?: string
+    twitter?: string
+    github?: string
+    linkedin?: string
+  }
+  headerText?: string
+  footerText?: string
+  showJoinDate?: boolean
+  profileLayout?: string
 }
 
 const AuthContext = createContext<AuthContextType>({
