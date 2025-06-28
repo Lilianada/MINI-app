@@ -283,28 +283,28 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 max-w-4xl">
+      <div className="sm:container mx-auto p-4 sm:p-6 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-xl font-semibold">Settings</h1>
           <p className="text-sm text-muted-foreground">Manage your profile and preferences</p>
         </div>
 
         <Tabs defaultValue="basic" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="basic" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
+          <TabsList className="grid w-full grid-cols-4 h-12">
+            <TabsTrigger value="basic" className="text-sm sm:text-base flex items-center gap-2">
+              <User className="hidden sm:block h-4 w-4" />
               Basic
             </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
+            <TabsTrigger value="profile" className="text-sm sm:text-base flex items-center gap-2">
+              <Palette className="hidden sm:block h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="collections" className="flex items-center gap-2">
-              <Layers className="h-4 w-4" />
+            <TabsTrigger value="collections" className="text-sm sm:text-base flex items-center gap-2">
+              <Layers className="hidden sm:block h-4 w-4" />
               Collections
             </TabsTrigger>
-            <TabsTrigger value="advanced" className="flex items-center gap-2">
-              <SettingsIcon className="h-4 w-4" />
+            <TabsTrigger value="advanced" className="text-sm sm:text-base flex items-center gap-2">
+              <SettingsIcon className="hidden sm:block h-4 w-4" />
               Advanced
             </TabsTrigger>
           </TabsList>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
           <TabsContent value="basic">
             <Card>
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
+                <CardTitle className="text-xl font-semibold">Basic Information</CardTitle>
                 <CardDescription>Update your basic profile information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -429,7 +429,7 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Visual Customization</CardTitle>
+                  <CardTitle className="text-xl font-semibold">Visual Customization</CardTitle>
                   <CardDescription>Customize the look and feel of your profile</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -525,7 +525,7 @@ export default function SettingsPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Social Links</CardTitle>
+                  <CardTitle className="text-xl font-semibold">Social Links</CardTitle>
                   <CardDescription>Add links to your social profiles</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -712,7 +712,7 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Skills</CardTitle>
+                    <CardTitle className="text-xl font-semibold">Skills</CardTitle>
                     <CardDescription>Your areas of expertise</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -755,7 +755,7 @@ export default function SettingsPage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Tools</CardTitle>
+                    <CardTitle className="text-xl font-semibold">Tools</CardTitle>
                     <CardDescription>Software and tools you use</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -804,7 +804,7 @@ export default function SettingsPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Custom Layout</CardTitle>
+                  <CardTitle className="text-xl font-semibold">Custom Layout</CardTitle>
                   <CardDescription>
                     Design your profile page using tokens. Available tokens: {'{displayProfileCard}'}, {'{displayPosts}'}, {'{projects}'}, {'{bookshelf}'}, {'{skills}'}, {'{displayName}'}, {'{profession}'}, {'{location}'}
                   </CardDescription>
@@ -840,7 +840,7 @@ I'm a {profession} based in {location}
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Custom CSS</CardTitle>
+                  <CardTitle className="text-xl font-semibold">Custom CSS</CardTitle>
                   <CardDescription>Add custom CSS to style your profile</CardDescription>
                 </CardHeader>
                 <CardContent>
