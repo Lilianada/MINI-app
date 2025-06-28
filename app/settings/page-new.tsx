@@ -283,10 +283,11 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="container mx-auto p-6 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold">Settings</h1>
-          <p className="text-sm text-muted-foreground">Manage your profile and preferences</p>
+          <h1 className="text-2xl font-bold mb-2">Settings</h1>
+          <p className="text-muted-foreground">Manage your profile and preferences</p>
         </div>
 
         <Tabs defaultValue="basic" className="space-y-6">
@@ -818,21 +819,12 @@ I'm a {profession} based in {location}
 
 {displayProfileCard}
 
-## My Work
+## My Projects
 {projects}
 
-## Currently Reading
-{bookshelf}
-
-## Skills & Expertise
-{skills}
-
-## Latest Posts
-{displayPosts}
-
----
-*Thanks for visiting my space!*"
-                    rows={16}
+## My Posts
+{displayPosts}"
+                    rows={12}
                     className="font-mono text-sm"
                   />
                 </CardContent>

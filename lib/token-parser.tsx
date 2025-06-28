@@ -5,6 +5,10 @@ import remarkBreaks from "remark-breaks"
 import { ProfileCard } from "@/components/profile-card"
 import { PostsDisplay } from "@/components/posts-display"
 import { TagsDisplay } from "@/components/tags-display"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ExternalLink, Star, Calendar, MapPin, Briefcase, GraduationCap, Trophy } from "lucide-react"
+import Link from "next/link"
 
 interface UserData {
   username: string
@@ -25,9 +29,37 @@ interface UserData {
     linkedin?: string
   }
   headerText?: string
-  footerText?: string
   showJoinDate?: boolean
   profileLayout?: string
+  // Structured data collections
+  general?: {
+    displayName?: string
+    profession?: string
+    location?: string
+    tagline?: string
+  }
+  projects?: Array<{
+    title: string
+    description?: string
+    url?: string
+    status?: 'active' | 'completed' | 'archived'
+    year?: string
+  }>
+  bookshelf?: Array<{
+    title: string
+    author: string
+    status?: 'reading' | 'completed' | 'want-to-read'
+    rating?: number
+  }>
+  timeline?: Array<{
+    title: string
+    organization?: string
+    period: string
+    description?: string
+    type: 'work' | 'education' | 'project' | 'achievement'
+  }>
+  skills?: string[]
+  tools?: string[]
 }
 
 interface Article {
@@ -64,6 +96,120 @@ export function parseTokens({ content, userData, articles, allArticles, linkPref
       
       case '{displayTags}':
         return <TagsDisplay key={index} articles={allArticles || articles} accentColor={accentColor} onTagClick={onTagClick} selectedTag={selectedTag} />
+      
+      // Structured data tokens (read.cv style)
+      case '{projects}':
+        return userData.projects && userData.projects.length > 0 ? (
+          <Card key={index} className="mb-6 projects-section">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Briefcase className="h-5 w-5" style={{ color: accentColor }} />
+                Projects
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {userData.projects.map((project, i) => (
+                  <div key={i} className="border rounded-lg p-4 hover:shadow-md transition-shadow project-item">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-semibold text-foreground">{project.title}</h4>
+                      {project.year && <span className="text-xs text-muted-foreground">{project.year}</span>}
+                    </div>
+                    {project.description && <p className="text-sm text-muted-foreground mb-2">{project.description}</p>}
+                    <div className="flex items-center justify-between">
+                      {project.status && (
+                        <Badge variant="outline" className="text-xs" style={{ borderColor: `${accentColor}40`, color: accentColor }}>
+                          {project.status}
+                        </Badge>
+                      )}
+                      {project.url && (
+                        <Link href={project.url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline" style={{ color: accentColor }}>
+                          <ExternalLink className="h-3 w-3 inline" />
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null
+      
+      case '{bookshelf}':
+        return userData.bookshelf && userData.bookshelf.length > 0 ? (
+          <Card key={index} className="mb-6 bookshelf-section">
+            <CardHeader>
+              <CardTitle className="text-lg">📚 Bookshelf</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {userData.bookshelf.map((book, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 border rounded-lg book-item">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-sm">{book.title}</h4>
+                      <p className="text-xs text-muted-foreground">by {book.author}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {book.rating && (
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, starIndex) => (
+                            <Star key={starIndex} className={`h-3 w-3 ${starIndex < book.rating! ? 'fill-current' : ''}`} style={{ color: starIndex < book.rating! ? accentColor : '#e5e7eb' }} />
+                          ))}
+                        </div>
+                      )}
+                      {book.status && (
+                        <Badge variant="outline" className="text-xs" style={{ borderColor: `${accentColor}40`, color: accentColor }}>
+                          {book.status === 'want-to-read' ? 'Want to read' : book.status}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null
+      
+      case '{skills}':
+        return userData.skills && userData.skills.length > 0 ? (
+          <Card key={index} className="mb-6 skills-section">
+            <CardHeader>
+              <CardTitle className="text-lg">Skills</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {userData.skills.map((skill, i) => (
+                  <Badge key={i} variant="outline" className="skill-item" style={{ borderColor: `${accentColor}40`, color: accentColor }}>
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : null
+      
+      // Dynamic text tokens
+      case '{displayName}':
+        return userData.general?.displayName ? (
+          <span key={index} className="font-semibold" style={{ color: accentColor }}>
+            {userData.general.displayName}
+          </span>
+        ) : userData.username
+      
+      case '{profession}':
+        return userData.general?.profession ? (
+          <span key={index} className="text-muted-foreground">
+            {userData.general.profession}
+          </span>
+        ) : null
+      
+      case '{location}':
+        return userData.general?.location ? (
+          <span key={index} className="flex items-center gap-1 text-muted-foreground">
+            <MapPin className="h-3 w-3" />
+            {userData.general.location}
+          </span>
+        ) : null
       
       default:
         // Render markdown for non-token content, preserving line breaks

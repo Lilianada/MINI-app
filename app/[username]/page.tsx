@@ -33,6 +33,35 @@ interface UserData {
   headerText?: string
   showJoinDate?: boolean
   profileLayout?: string
+  // Structured data collections (read.cv style)
+  general?: {
+    displayName?: string
+    profession?: string
+    location?: string
+    tagline?: string
+  }
+  projects?: Array<{
+    title: string
+    description?: string
+    url?: string
+    status?: 'active' | 'completed' | 'archived'
+    year?: string
+  }>
+  bookshelf?: Array<{
+    title: string
+    author: string
+    status?: 'reading' | 'completed' | 'want-to-read'
+    rating?: number
+  }>
+  timeline?: Array<{
+    title: string
+    organization?: string
+    period: string
+    description?: string
+    type: 'work' | 'education' | 'project' | 'achievement'
+  }>
+  skills?: string[]
+  tools?: string[]
 }
 
 interface Article {
