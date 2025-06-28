@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
 import { X } from "lucide-react"
 import { Footer } from "@/components/footer"
+import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
 
 interface Article {
   title: string
@@ -39,14 +40,21 @@ export default function EditArticlePage() {
   const [published, setPublished] = useState(false)
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
+  // Authentication redirect
   useEffect(() => {
-    if (!user) {
-      router.push("/login")
+    if (!authLoading && !user) {
+      router.replace("/login")
       return
+    }
+  }, [user, authLoading, router])
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      return // Don't fetch if not authenticated
     }
 
     const fetchArticle = async () => {
@@ -60,7 +68,7 @@ export default function EditArticlePage() {
           const articleData = articleSnap.data() as Article
 
           // Check if the current user is the author
-          if (articleData.authorId !== user.uid) {
+          if (!user || articleData.authorId !== user.uid) {
             console.error("Unauthorized: You don't have permission to edit this article")
             router.push("/profile")
             return
@@ -178,21 +186,11 @@ export default function EditArticlePage() {
   }
 
   if (loading) {
-    return (
-      <>
-        
-        <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-146px)]">
-          <div className="flex justify-center my-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        </div>
-         
-      </>
-    )
+    return <PageLoadingSkeleton />
   }
 
   if (!user) {
-    return null
+    return <PageLoadingSkeleton />
   }
 
   if (!article) {

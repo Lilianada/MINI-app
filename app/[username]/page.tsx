@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { parseTokens } from "@/lib/token-parser"
 import { initializeFirebase } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
+import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
 
 interface UserData {
   username: string
@@ -117,8 +118,6 @@ export default function PublicProfilePage() {
         // Dynamic import of Firestore functions
         const { collection, query, where, orderBy, getDocs } = await import("firebase/firestore")
 
-        console.log("Fetching profile for username:", username)
-
         // Normalize username to lowercase for lookup
         const normalizedUsername = username.toLowerCase()
 
@@ -132,7 +131,6 @@ export default function PublicProfilePage() {
           usersSnapshot = await getDocs(usersQuery)
           
           if (usersSnapshot.empty) {
-            console.log("No user found with username:", username)
             setUserNotFound(true)
             setLoading(false)
             return
@@ -256,7 +254,7 @@ export default function PublicProfilePage() {
   }
 
   if (!user) {
-    return null
+    return <PageLoadingSkeleton />
   }
 
   if (userNotFound) {
@@ -276,13 +274,7 @@ export default function PublicProfilePage() {
   }
 
   if (!userData) {
-    return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="max-w-2xl py-16">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
+    return <PageLoadingSkeleton />
   }
 
   // Default layout if no custom layout is set

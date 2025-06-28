@@ -1,10 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ModeToggle } from "@/components/mode-toggle"
 import { TypewriterEffect } from "@/components/typewriter-effect"
-import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
 import { Minimize } from "lucide-react"
 
 export default function Home() {

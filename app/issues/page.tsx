@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useToast } from "@/components/ui/use-toast"
 import { format } from "date-fns"
+import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
 
 interface Issue {
   id: string
@@ -166,7 +167,7 @@ export default function IssuesPage() {
   }
 
   if (!user) {
-    return null
+    return <PageLoadingSkeleton />
   }
 
   return (

@@ -12,6 +12,7 @@ import Link from "next/link"
 import { initializeFirebase } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
 import { useAuth } from "@/lib/auth-context"
+import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
 
 interface User {
   id: string
@@ -36,10 +37,10 @@ export default function UsersPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
 
+  // Authentication redirect
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push("/login")
-      return
+      router.replace("/login")
     }
   }, [user, authLoading, router])
 
@@ -191,7 +192,7 @@ export default function UsersPage() {
   }
 
   if (!user) {
-    return null
+    return <PageLoadingSkeleton />
   }
 
   return (

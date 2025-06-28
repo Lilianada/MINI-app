@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { HelpModal } from "@/components/help-modal"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
 import { ArticleList } from "@/components/article-list"
+import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
 
 interface Article {
   id: string
@@ -77,7 +78,7 @@ export default function ProfilePage() {
 
   // Don't render if not authenticated
   if (!user) {
-    return null
+    return <PageLoadingSkeleton />
   }
 
   useEffect(() => {
