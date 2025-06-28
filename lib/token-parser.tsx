@@ -2,6 +2,8 @@ import React from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
+import rehypeRaw from "rehype-raw"
+import rehypeSanitize from "rehype-sanitize"
 import { ProfileCard } from "@/components/profile-card"
 import { PostsDisplay } from "@/components/posts-display"
 import { TagsDisplay } from "@/components/tags-display"
@@ -212,11 +214,43 @@ export function parseTokens({ content, userData, articles, allArticles, linkPref
         ) : null
       
       default:
-        // Render markdown for non-token content, preserving line breaks
+        // Render markdown with HTML support for non-token content
         return token ? (
           <ReactMarkdown
             key={index}
             remarkPlugins={[remarkGfm, remarkBreaks]}
+            rehypePlugins={[
+              rehypeRaw,
+              [
+                rehypeSanitize,
+                {
+                  tagNames: [
+                    // Standard HTML tags
+                    'div', 'span', 'p', 'br', 'strong', 'em', 'u', 'i', 'b',
+                    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'ul', 'ol', 'li', 'dl', 'dt', 'dd',
+                    'blockquote', 'pre', 'code',
+                    'table', 'thead', 'tbody', 'tr', 'td', 'th',
+                    'a', 'img',
+                    // Semantic HTML5 tags
+                    'section', 'article', 'header', 'footer', 'main', 'aside', 'nav',
+                    'figure', 'figcaption', 'time', 'mark', 'small', 'del', 'ins'
+                  ],
+                  attributes: {
+                    '*': ['className', 'class', 'style', 'id'],
+                    'a': ['href', 'title', 'target', 'rel'],
+                    'img': ['src', 'alt', 'title', 'width', 'height'],
+                    'time': ['dateTime'],
+                    'code': ['className', 'class'],
+                    'pre': ['className', 'class']
+                  },
+                  protocols: {
+                    href: ['http', 'https', 'mailto'],
+                    src: ['http', 'https']
+                  }
+                }
+              ]
+            ]}
             components={{
               p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
               h1: ({node, ...props}) => <h1 className="text-3xl font-bold mb-4 mt-6" {...props} />,
@@ -239,6 +273,16 @@ export function parseTokens({ content, userData, articles, allArticles, linkPref
               a: ({node, ...props}) => <a className="hover:underline" style={{ color: accentColor }} {...props} />,
               strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
               em: ({node, ...props}) => <em className="italic" {...props} />,
+              // Support for HTML elements with custom styling
+              div: ({node, ...props}) => <div {...props} />,
+              span: ({node, ...props}) => <span {...props} />,
+              section: ({node, ...props}) => <section {...props} />,
+              article: ({node, ...props}) => <article {...props} />,
+              header: ({node, ...props}) => <header {...props} />,
+              footer: ({node, ...props}) => <footer {...props} />,
+              main: ({node, ...props}) => <main {...props} />,
+              aside: ({node, ...props}) => <aside {...props} />,
+              nav: ({node, ...props}) => <nav {...props} />,
             }}
           >
             {token}

@@ -806,7 +806,7 @@ export default function SettingsPage() {
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold">Custom Layout</CardTitle>
                   <CardDescription>
-                    Design your profile page using tokens. Available tokens: {'{displayProfileCard}'}, {'{displayPosts}'}, {'{projects}'}, {'{bookshelf}'}, {'{skills}'}, {'{displayName}'}, {'{profession}'}, {'{location}'}
+                    Design your profile page using tokens and HTML/Markdown. Available tokens: {'{displayProfileCard}'}, {'{displayPosts}'}, {'{projects}'}, {'{bookshelf}'}, {'{skills}'}, {'{displayName}'}, {'{profession}'}, {'{location}'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -816,13 +816,19 @@ export default function SettingsPage() {
                     placeholder="# Hello, I'm {displayName} 👋
 I'm a {profession} based in {location}
 
-{displayProfileCard}
+<div class='profile-section'>
+  {displayProfileCard}
+</div>
 
 ## My Work
-{projects}
+<section class='projects-grid'>
+  {projects}
+</section>
 
 ## Currently Reading
-{bookshelf}
+<div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem; border-radius: 12px; color: white;'>
+  {bookshelf}
+</div>
 
 ## Skills & Expertise
 {skills}
@@ -831,7 +837,9 @@ I'm a {profession} based in {location}
 {displayPosts}
 
 ---
-*Thanks for visiting my space!*"
+<footer style='text-align: center; font-style: italic; opacity: 0.8;'>
+  Thanks for visiting my space! ✨
+</footer>"
                     rows={16}
                     className="font-mono text-sm"
                   />
@@ -861,7 +869,15 @@ I'm a {profession} based in {location}
   transition: all 0.3s ease;
 }
 
-/* Custom colors */
+/* Custom HTML element styling */
+.profile-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  border-radius: 15px;
+  color: white;
+}
+
+/* Skill items */
 .skill-item {
   background: linear-gradient(45deg, #667eea, #764ba2);
   color: white;
@@ -872,6 +888,7 @@ I'm a {profession} based in {location}
                   />
                   <div className="text-xs text-muted-foreground mt-2 space-y-1">
                     <p>Available CSS classes: .profile-card, .profile-banner, .project-item, .book-item, .skill-item, .tool-item, .article-item, .tag-item</p>
+                    <p>You can style any HTML elements used in your custom layout above</p>
                   </div>
                 </CardContent>
               </Card>
