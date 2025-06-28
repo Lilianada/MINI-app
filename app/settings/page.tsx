@@ -71,12 +71,19 @@ export default function SettingsPage() {
   const router = useRouter()
   const { toast } = useToast()
 
+  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login")
-      return
     }
+  }, [user, loading, router])
 
+  // Don't render if not authenticated
+  if (!user) {
+    return null
+  }
+
+  useEffect(() => {
     if (userData) {
       // Load basic profile data
       setUsername(userData.username)
@@ -272,13 +279,32 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="container mx-auto p-6 max-w-4xl">
-          <p>Loading...</p>
+      // replace this with loading skeletons
+      <div className="space-y-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted rounded w-1/3 mb-2" />
+          <div className="h-4 bg-muted rounded w-1/2" />
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+        <div className="h-6 bg-muted rounded w-1/2" />
+        <div className="h-10 bg-muted rounded" />
+        <div className="h-4 bg-muted rounded w-1/3" />
+          </div>
+          <div className="space-y-4">
+        <div className="h-6 bg-muted rounded w-1/2" />
+        <div className="h-10 bg-muted rounded" />
+          </div>
+        </div>
+        <div className="h-32 bg-muted rounded mt-6" />
+        <div className="h-10 bg-muted rounded w-32 ml-auto mt-8" />
       </div>
     )
+  }
+
+  // Strict authentication guard - prevent any content from rendering for unauthenticated users
+  if (!user) {
+    return null
   }
 
   return (

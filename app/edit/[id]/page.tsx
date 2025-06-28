@@ -191,6 +191,10 @@ export default function EditArticlePage() {
     )
   }
 
+  if (!user) {
+    return null
+  }
+
   if (!article) {
     return (
       <>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -10,6 +10,7 @@ import Link from "next/link"
 import { useToast } from "@/components/ui/use-toast"
 import { parseTokens } from "@/lib/token-parser"
 import { initializeFirebase } from "@/lib/firebase"
+import { useAuth } from "@/lib/auth-context"
 
 interface UserData {
   username: string
@@ -76,6 +77,7 @@ interface Article {
 
 export default function PublicProfilePage() {
   const params = useParams()
+  const router = useRouter()
   const username = params.username as string
   const [userData, setUserData] = useState<UserData | null>(null)
   const [articles, setArticles] = useState<Article[]>([])
@@ -84,6 +86,15 @@ export default function PublicProfilePage() {
   const [loading, setLoading] = useState(true)
   const [userNotFound, setUserNotFound] = useState(false)
   const { toast } = useToast()
+  const { user, loading: authLoading } = useAuth()
+
+  // Authentication check
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login")
+      return
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -215,7 +226,7 @@ export default function PublicProfilePage() {
     setSelectedTag(tag)
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background p-6">
         <div className="space-y-8">
@@ -242,6 +253,10 @@ export default function PublicProfilePage() {
         </div>
       </div>
     )
+  }
+
+  if (!user) {
+    return null
   }
 
   if (userNotFound) {

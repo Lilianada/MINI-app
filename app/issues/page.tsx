@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { collection, query, orderBy, getDocs, doc, updateDoc, Timestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
@@ -25,8 +26,17 @@ export default function IssuesPage() {
   const [issues, setIssues] = useState<Issue[]>([])
   const [loading, setLoading] = useState(true)
   const [resolvingId, setResolvingId] = useState<string | null>(null)
-  const { user, userData } = useAuth()
+  const { user, userData, loading: authLoading } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
+
+  // Authentication check
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login")
+      return
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     fetchIssues()
@@ -130,6 +140,33 @@ export default function IssuesPage() {
     } finally {
       setResolvingId(null)
     }
+  }
+
+  if (authLoading || loading) {
+    return (
+      <>
+        
+        <div className="container mx-auto py-8 px-4 min-h-[calc(100vh-146px)]">
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-4 w-24" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-16 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  if (!user) {
+    return null
   }
 
   return (

@@ -92,15 +92,6 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!isFirebaseInitialized) {
-      console.error("Firebase is not initialized")
-      setErrors({
-        ...errors,
-        general: "System is initializing. Please try again in a moment.",
-      })
-      return
-    }
-
     try {
       setIsLoading(true)
 
@@ -139,15 +130,9 @@ export default function SignupPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
-            <CardDescription className="text-center">Create your MINI account</CardDescription>
+            <CardDescription className="text-center">Create your MINISPACE account</CardDescription>
           </CardHeader>
           <CardContent>
-            {!isFirebaseInitialized && (
-              <div className="mb-4 p-4 border rounded-md bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200">
-                System is initializing. Please wait a moment.
-              </div>
-            )}
-
             {errors.general && (
               <div className="mb-4 p-4 border rounded-md bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200">
                 {errors.general}
@@ -166,7 +151,6 @@ export default function SignupPage() {
                   disabled={isLoading || !isFirebaseInitialized}
                 />
                 {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
-                <p className="text-xs text-muted-foreground">Usernames are automatically converted to lowercase</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

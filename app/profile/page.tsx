@@ -73,7 +73,14 @@ export default function ProfilePage() {
       router.push("/login");
       return;
     }
+  }, [user, loading, router])
 
+  // Don't render if not authenticated
+  if (!user) {
+    return null
+  }
+
+  useEffect(() => {
     // Don't fetch articles until user and userData are loaded and authenticated
     if (loading || !user || !userData) {
       return;

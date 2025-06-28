@@ -147,6 +147,20 @@ export default function WritePage() {
     }
   }
 
+  if (loading) {
+    return (
+      <>
+        <div className="container mx-auto py-8 sm:px-8">
+          <p>Loading...</p>
+        </div>
+      </>
+    )
+  }
+
+  if (!user) {
+    return null
+  }
+
   return (
     <>
       

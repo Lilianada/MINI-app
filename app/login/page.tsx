@@ -53,15 +53,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!isFirebaseInitialized) {
-      console.error("Firebase is not initialized")
-      setErrors({
-        ...errors,
-        general: "System is initializing. Please try again in a moment.",
-      })
-      return
-    }
-
     if (!validateForm()) {
       return
     }
@@ -101,15 +92,9 @@ export default function LoginPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Log In</CardTitle>
-            <CardDescription className="text-center">Welcome back to MINI</CardDescription>
+            <CardDescription className="text-center">Welcome back to MINISPACE</CardDescription>
           </CardHeader>
           <CardContent>
-            {!isFirebaseInitialized && (
-              <div className="mb-4 p-4 border rounded-md bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200">
-                System is initializing. Please wait a moment.
-              </div>
-            )}
-
             {errors.general && (
               <div className="mb-4 p-4 border rounded-md bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200">
                 {errors.general}

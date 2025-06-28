@@ -37,36 +37,36 @@ export function Navbar() {
             <SheetContent side="left" className="p-0 w-64 flex flex-col justify-between">
               <div className="flex flex-col gap-6 p-4">
                 <SheetTitle>
-                  <Link href="/" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2">
-                    
-                  </Link>
+                  <Link href="/" className="font-bold text-base mb-4 flex items-center gap-2 px-2 py-2"></Link>
                 </SheetTitle>
+                
+                {/* Public pages - always visible */}
                 <Link href="/about" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <Minimize className="w-4 h-4" /> About
                 </Link>
                 <Link href="/discover" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
                   <Text className="w-4 h-4" /> Discover
                 </Link>
-                <Link href="/users" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
-                  <Users className="w-4 h-4" /> Community
-                </Link>
-                <Link href="/write" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
-                  <PenLine className="w-4 h-4" /> Write
-                </Link>
+                
+                {/* Authenticated user pages only */}
                 {user && (
-                  <Link href="/profile" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
-                    <User className="w-4 h-4" /> Profile
-                  </Link>
-                )}
-                {user && (
-                  <Link href="/settings" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)} >
-                    <Settings className="w-4 h-4" /> Settings
-                  </Link>
-                )}
-                {user && (
-                  <Link href="/issues" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)} >
-                    <AlertCircle className="w-4 h-4" /> Issues
-                  </Link>
+                  <>
+                    <Link href="/users" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                      <Users className="w-4 h-4" /> Community
+                    </Link>
+                    <Link href="/write" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                      <PenLine className="w-4 h-4" /> Write
+                    </Link>
+                    <Link href="/profile" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)}>
+                      <User className="w-4 h-4" /> Profile
+                    </Link>
+                    <Link href="/settings" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)} >
+                      <Settings className="w-4 h-4" /> Settings
+                    </Link>
+                    <Link href="/issues" className="flex items-center gap-2 hover:bg-muted cursor-pointer rounded-lg px-2 py-2" onClick={() => setIsMobileOpen(false)} >
+                      <AlertCircle className="w-4 h-4" /> Issues
+                    </Link>
+                  </>
                 )}
                 </div>
                 <div className="flex flex-col gap-6 p-4">

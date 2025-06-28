@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +11,7 @@ import { Search, Users as UsersIcon, Filter, Grid, List } from "lucide-react"
 import Link from "next/link"
 import { initializeFirebase } from "@/lib/firebase"
 import { useToast } from "@/components/ui/use-toast"
+import { useAuth } from "@/lib/auth-context"
 
 interface User {
   id: string
@@ -31,6 +33,15 @@ export default function UsersPage() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "most-active">("newest")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { toast } = useToast()
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login")
+      return
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -150,7 +161,7 @@ export default function UsersPage() {
     setFilteredUsers(filtered)
   }, [users, searchTerm, sortBy])
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="container mx-auto p-6 max-w-6xl">
         <div className="mb-8 text-center">
@@ -177,6 +188,10 @@ export default function UsersPage() {
         </div>
       </div>
     )
+  }
+
+  if (!user) {
+    return null
   }
 
   return (
