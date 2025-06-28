@@ -12,6 +12,7 @@ import { parseTokens } from "@/lib/token-parser"
 import { initializeFirebase } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
+import { UserLoadingSkeleton } from "@/components/user-loading-skeleton"
 
 interface UserData {
   username: string
@@ -254,7 +255,7 @@ export default function PublicProfilePage() {
   }
 
   if (!user) {
-    return <PageLoadingSkeleton />
+    return <UserLoadingSkeleton />
   }
 
   if (userNotFound) {
@@ -274,7 +275,7 @@ export default function PublicProfilePage() {
   }
 
   if (!userData) {
-    return <PageLoadingSkeleton />
+    return <UserLoadingSkeleton />
   }
 
   // Default layout if no custom layout is set

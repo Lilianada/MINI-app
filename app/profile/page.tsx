@@ -16,6 +16,7 @@ import { HelpModal } from "@/components/help-modal"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
 import { ArticleList } from "@/components/article-list"
 import { PageLoadingSkeleton } from "@/components/page-loading-skeleton"
+import { UserLoadingSkeleton } from "@/components/user-loading-skeleton"
 
 interface Article {
   id: string
@@ -78,7 +79,7 @@ export default function ProfilePage() {
 
   // Don't render if not authenticated
   if (!user) {
-    return <PageLoadingSkeleton />
+    return <UserLoadingSkeleton />
   }
 
   useEffect(() => {
